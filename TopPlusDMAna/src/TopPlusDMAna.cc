@@ -1,74 +1,18 @@
-// -*- C++ -*-
-//
-// Package:    TopPlusDMAna
-// Class:      TopPlusDMAna
-// 
-/**\class TopPlusDMAna TopPlusDMAna.cc ttbarDM/TopPlusDMAna/src/TopPlusDMAna.cc
-
- Description: [one line class summary]
-
- Implementation:
-     [Notes on implementation]
-*/
-//
-// Original Author:  justin pilot
-//         Created:  Tue May 27 03:24:35 CDT 2014
-// $Id$
-//
-//
+#include "ttbarDM/TopPlusDMAna/interface/TopPlusDMAna.h"
 
 
-// system include files
-#include <memory>
+using namespace edm;
 
-// user include files
-#include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
-
-#include "FWCore/Framework/interface/Event.h"
-#include "FWCore/Framework/interface/MakerMacros.h"
-
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
-//
-// class declaration
-//
-
-class TopPlusDMAna : public edm::EDAnalyzer {
-   public:
-      explicit TopPlusDMAna(const edm::ParameterSet&);
-      ~TopPlusDMAna();
-
-      static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
-
-
-   private:
-      virtual void beginJob() ;
-      virtual void analyze(const edm::Event&, const edm::EventSetup&);
-      virtual void endJob() ;
-
-      virtual void beginRun(edm::Run const&, edm::EventSetup const&);
-      virtual void endRun(edm::Run const&, edm::EventSetup const&);
-      virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
-      virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
-
-      // ----------member data ---------------------------
-};
-
-//
-// constants, enums and typedefs
-//
-
-//
-// static data member definitions
-//
-
-//
-// constructors and destructor
-//
 TopPlusDMAna::TopPlusDMAna(const edm::ParameterSet& iConfig)
 
 {
    //now do what ever initialization is needed
+
+  electrons = new Electrons(iConfig);
+    
+  outputFile_   = iConfig.getParameter<std::string>("outputFile");
+  rootFile_ = new TFile(outputFile_.c_str(),"RECREATE"); // open output file to store root-trees.
+
 
 }
 
@@ -90,20 +34,18 @@ TopPlusDMAna::~TopPlusDMAna()
 void
 TopPlusDMAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-   using namespace edm;
-
-    std::cout << "here!" << std::endl;
-
-
-#ifdef THIS_IS_AN_EVENT_EXAMPLE
-   Handle<ExampleData> pIn;
-   iEvent.getByLabel("example",pIn);
-#endif
    
-#ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
-   ESHandle<SetupData> pSetup;
-   iSetup.get<SetupRecord>().get(pSetup);
-#endif
+   
+  //electrons
+  electrons->analyze(iEvent, iSetup);
+  
+  
+  
+
+
+  //in the end
+  tree->Fill();
+  
 }
 
 
@@ -111,18 +53,39 @@ TopPlusDMAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 void 
 TopPlusDMAna::beginJob()
 {
+  tree = new TTree("Analysis","analysis tree");
+  
+  
+  electrons->defineBranch(tree);
+
+  
+  
+
+
+
+
+  
+  
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void 
 TopPlusDMAna::endJob() 
 {
+
+  rootFile_->cd();
+  tree->Write();
+  rootFile_->Write() ;
+  rootFile_->Close() ;
+  
 }
 
 // ------------ method called when starting to processes a run  ------------
 void 
 TopPlusDMAna::beginRun(edm::Run const&, edm::EventSetup const&)
 {
+
+
 }
 
 // ------------ method called when ending the processing of a run  ------------
