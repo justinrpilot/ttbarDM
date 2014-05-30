@@ -63,6 +63,10 @@
 <use   name="DataFormats/ParticleFlowReco"/>
 <use   name="TrackingTools/IPTools"/>
 <use   name="EgammaAnalysis/ElectronTools"/>
+<!-- MUON -->
+<use name="DataFormats/PatCandidates">
+<use name="DataFormats/MuonReco">
+<use name="DataFormats/VertexReco">
 <flags   EDM_PLUGIN="1"/>
 <export>
 </export>

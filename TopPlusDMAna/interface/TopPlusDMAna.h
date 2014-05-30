@@ -8,6 +8,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "ttbarDM/TopPlusDMAna/interface/Electrons.h"
+#include "ttbarDM/TopPlusDMAna/interface/Muons.h"
 
 
 
@@ -41,6 +42,7 @@ class TopPlusDMAna : public edm::EDAnalyzer {
 
 
   Electrons* electrons; 
+  Muons*     muons; 
 
 
  private:
