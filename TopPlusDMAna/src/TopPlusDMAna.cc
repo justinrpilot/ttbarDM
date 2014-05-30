@@ -9,6 +9,7 @@ TopPlusDMAna::TopPlusDMAna(const edm::ParameterSet& iConfig)
    //now do what ever initialization is needed
 
   electrons = new Electrons(iConfig);
+  muons     = new Muons(iConfig);
     
   outputFile_   = iConfig.getParameter<std::string>("outputFile");
   rootFile_ = new TFile(outputFile_.c_str(),"RECREATE"); // open output file to store root-trees.
@@ -38,6 +39,7 @@ TopPlusDMAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    
   //electrons
   electrons->analyze(iEvent, iSetup);
+  muons    ->analyze(iEvent, iSetup);
   
   
   
@@ -57,6 +59,7 @@ TopPlusDMAna::beginJob()
   
   
   electrons->defineBranch(tree);
+  muons    ->defineBranch(tree);
 
   
   
