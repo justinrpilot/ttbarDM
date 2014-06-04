@@ -51,16 +51,15 @@ bool Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
   std::cout<<"Number of primary vertices: "<<nPV<<std::endl;
   const reco::Vertex* vertex=&pvHandle->front();
 
-  edm::Handle<std::vector<pat::Muon> > muons;
-  iEvent.getByLabel(muLabel_, muons);
-  
+  edm::Handle<std::vector<pat::Muon> > muonHandle;
+  iEvent.getByLabel(muLabel_, muonHandle);
+  std::vector<pat::Muon> const & muons = *muonHandle;  
 
   nMuon = 0;
-  for(std::vector<pat::Muon>::const_iterator imuon = muons->begin(), emuon = muons->end(); 
-      imuon != emuon; ++imuon) {
+  for(std::vector<pat::Muon>::const_iterator imuon = muons.begin(); imuon!= muons.end() && nMuon < nMuonMAX ; ++imuon) {
 
-    if (imuon->pt() < ptmin_) continue;
-    if (fabs(imuon->eta() ) < 2.4 ) continue;
+    //    if (imuon->pt() < ptmin_) continue;
+    //if (fabs(imuon->eta() ) < 2.4 ) continue;
 
     float pfIso = 0.;
     // (imuon.pfIsolationR04().sumChargedHadronPt + std::max(imuon.pfIsolationR04().sumNeutralHadronEt + imuon.pfIsolationR04().sumPhotonEt - 0.5*imuon.pfIsolationR04().sumPUPt, 0.) ) / imuon.pt(); // from PAT
@@ -70,6 +69,7 @@ bool Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
     bool isLoose = isLooseMuon(mu);
 
     muPt    [nMuon] = imuon->pt();
+
     muEta   [nMuon] = imuon->eta();
     muPhi   [nMuon] = imuon->phi();
     muCharge[nMuon] = imuon->charge();    
@@ -81,7 +81,6 @@ bool Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
     nMuon ++; 
   }
-  
   
   return true;
 }

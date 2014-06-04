@@ -32,7 +32,7 @@ bool Electrons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   nElectron = 0;
 
-  for(std::vector<pat::Electron>::const_iterator ee = electrons.begin(); ee!= electrons.end() && nElectron < nElectronMAX ; ee++){
+  for(std::vector<pat::Electron>::const_iterator ee = electrons.begin(); ee!= electrons.end() && nElectron < nElectronMAX ; ++ee){
     elePt[nElectron] = ee->pt();
     eleEta[nElectron] = ee->eta();
     elePhi[nElectron] = ee->phi();
