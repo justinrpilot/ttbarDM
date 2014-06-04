@@ -21,6 +21,8 @@
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "RecoEcal/EgammaCoreTools/interface/EcalClusterLazyTools.h"
 
+//Pat Electrons
+#include "DataFormats/PatCandidates/interface/Electron.h"
 
 #include "TTree.h"
 #include "TClonesArray.h"
@@ -39,15 +41,15 @@ class Electrons {
 
  private:
 
-  edm::InputTag m_electronSrc;
+  edm::InputTag eleLabel_;
   
   
   static const int nElectronMAX = 100;
   int nElectron;
-  float electronpt[nElectronMAX];
-  float electroneta[nElectronMAX];
-  float electronphi[nElectronMAX];
-  int electroncharge[nElectronMAX];
+  float elePt[nElectronMAX];
+  float eleEta[nElectronMAX];
+  float elePhi[nElectronMAX];
+  int eleCharge[nElectronMAX];
 
   
   

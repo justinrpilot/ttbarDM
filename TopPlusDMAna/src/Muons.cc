@@ -12,12 +12,12 @@
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 
 
-Muons::Muons(const edm::ParameterSet& iConfig){
-  edm::ParameterSet conf = iConfig.getParameter<edm::ParameterSet>("muonBlock");
-  muonLabel_ = conf.getParameter<edm::InputTag>("muon"); // "patMuons";
-  pvLabel_   = conf.getParameter<edm::InputTag>("pv");   // "offlinePrimaryVertex"
-  ptmin_     = conf.getParameter<double>       ("ptmin");
-}
+Muons::Muons(const edm::ParameterSet& iConfig):
+  //edm::ParameterSet conf = iConfig.getParameter<edm::ParameterSet>("muonBlock");
+  muLabel_(iConfig.getParameter<edm::InputTag>("muonLabel")),
+  pvLabel_(iConfig.getParameter<edm::InputTag>("pv")),   // "offlinePrimaryVertex"
+  ptmin_(iConfig.getParameter<double>("ptmin"))
+{}
 
 Muons::~Muons() {
 
@@ -26,11 +26,14 @@ Muons::~Muons() {
 void Muons::defineBranch(TTree* tree) {
 
   tree->Branch("nMuon",    &nMuon,      "nMuon/I");
-  tree->Branch("muonpt",    muonpt,     "muonpt[nMuon]/F");
-  tree->Branch("muoneta",   muoneta,    "muoneta[nMuon]/F");
-  tree->Branch("muonphi",   muonphi,    "muonphi[nMuon]/F");
-  tree->Branch("muoncharge",muoncharge, "muoncharge[nMuon]/I");
-  tree->Branch("muonpfiso", muonpfiso,  "muonpfiso[nMuon]/F");
+  tree->Branch("muPt",    muPt,     "muPt[nMuon]/F");
+  tree->Branch("muEta",   muEta,    "muEta[nMuon]/F");
+  tree->Branch("muPhi",   muPhi,    "muPhi[nMuon]/F");
+  tree->Branch("muPFiso",   muPFiso,    "muPFiso[nMuon]/F");
+  tree->Branch("muCharge",muCharge, "muCharge[nMuon]/I");
+  tree->Branch("muisSoft", muisSoft,  "muisSoft[nMuon]/O");
+  tree->Branch("muisLoose", muisLoose,  "muisLoose[nMuon]/O");
+  tree->Branch("muisTight", muisTight,  "muisTight[nMuon]/O");
 
 }
 
@@ -39,15 +42,17 @@ bool Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
     
   edm::Handle<std::vector<reco::Vertex> > pvHandle;
   iEvent.getByLabel(pvLabel_, pvHandle);
+
   if(!pvHandle.isValid()) {
     std::cout << " - No Primary Vertex" << std::endl;
     return true;
   }
   size_t nPV=pvHandle->size();
+  std::cout<<"Number of primary vertices: "<<nPV<<std::endl;
   const reco::Vertex* vertex=&pvHandle->front();
 
   edm::Handle<std::vector<pat::Muon> > muons;
-  iEvent.getByLabel(muonLabel_, muons);
+  iEvent.getByLabel(muLabel_, muons);
   
 
   nMuon = 0;
@@ -61,13 +66,18 @@ bool Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
     // (imuon.pfIsolationR04().sumChargedHadronPt + std::max(imuon.pfIsolationR04().sumNeutralHadronEt + imuon.pfIsolationR04().sumPhotonEt - 0.5*imuon.pfIsolationR04().sumPUPt, 0.) ) / imuon.pt(); // from PAT
     const pat::Muon* mu = &(*imuon);
     bool isTight = isTightMuon(mu, vertex);
+    bool isSoft = isSoftMuon(mu, vertex);
     bool isLoose = isLooseMuon(mu);
 
-    muonpt    [nMuon] = imuon->pt();
-    muoneta   [nMuon] = imuon->eta();
-    muonphi   [nMuon] = imuon->phi();
-    muoncharge[nMuon] = imuon->charge();    
-    muonpfiso[nMuon]  = pfIso;
+    muPt    [nMuon] = imuon->pt();
+    muEta   [nMuon] = imuon->eta();
+    muPhi   [nMuon] = imuon->phi();
+    muCharge[nMuon] = imuon->charge();    
+    muPFiso[nMuon]  = pfIso;
+    muisSoft[nMuon]  = isSoft;
+    muisLoose[nMuon]  = isLoose;
+    muisTight[nMuon]  = isTight;
+
 
     nMuon ++; 
   }

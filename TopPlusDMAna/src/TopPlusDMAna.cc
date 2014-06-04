@@ -37,7 +37,6 @@ TopPlusDMAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    
    
-  //electrons
   electrons->analyze(iEvent, iSetup);
   muons    ->analyze(iEvent, iSetup);
   

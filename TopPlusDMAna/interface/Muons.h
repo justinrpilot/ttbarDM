@@ -26,18 +26,21 @@ class Muons {
   bool isSoftMuon (const pat::Muon*, const reco::Vertex*);
   bool isTightMuon(const pat::Muon*, const reco::Vertex*);
   
-  edm::InputTag muonLabel_;
+  edm::InputTag muLabel_;
   edm::InputTag pvLabel_;
   float ptmin_;
   
   
   static const int nMuonMAX = 100;
   int nMuon;
-  float muonpt[nMuonMAX];
-  float muoneta[nMuonMAX];
-  float muonphi[nMuonMAX];
-  int muoncharge[nMuonMAX];
-  float muonpfiso[nMuonMAX];
+  float muPt[nMuonMAX];
+  float muEta[nMuonMAX];
+  float muPhi[nMuonMAX];
+  int muCharge[nMuonMAX];
+  float muPFiso[nMuonMAX];
+  bool muisSoft[nMuonMAX];
+  bool muisLoose[nMuonMAX];
+  bool muisTight[nMuonMAX];
 
   
   
