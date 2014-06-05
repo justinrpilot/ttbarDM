@@ -26,10 +26,10 @@ Muons::~Muons() {
 void Muons::defineBranch(TTree* tree) {
 
   tree->Branch("nMuon",    &nMuon,      "nMuon/I");
-  tree->Branch("muPt",    muPt,     "muPt[nMuon]/F");
-  tree->Branch("muEta",   muEta,    "muEta[nMuon]/F");
-  tree->Branch("muPhi",   muPhi,    "muPhi[nMuon]/F");
-  tree->Branch("muPFiso",   muPFiso,    "muPFiso[nMuon]/F");
+  tree->Branch("muPt",    muPt,     "muPt[nMuon]/D");
+  tree->Branch("muEta",   muEta,    "muEta[nMuon]/D");
+  tree->Branch("muPhi",   muPhi,    "muPhi[nMuon]/D");
+  tree->Branch("muPFiso",   muPFiso,    "muPFiso[nMuon]/D");
   tree->Branch("muCharge",muCharge, "muCharge[nMuon]/I");
   tree->Branch("muisSoft", muisSoft,  "muisSoft[nMuon]/O");
   tree->Branch("muisLoose", muisLoose,  "muisLoose[nMuon]/O");

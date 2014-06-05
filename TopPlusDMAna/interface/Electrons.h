@@ -46,9 +46,9 @@ class Electrons {
   
   static const int nElectronMAX = 100;
   int nElectron;
-  float elePt[nElectronMAX];
-  float eleEta[nElectronMAX];
-  float elePhi[nElectronMAX];
+  double elePt[nElectronMAX];
+  double eleEta[nElectronMAX];
+  double elePhi[nElectronMAX];
   int eleCharge[nElectronMAX];
 
   

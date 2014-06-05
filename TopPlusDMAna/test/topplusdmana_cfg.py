@@ -21,7 +21,7 @@ process = cms.Process("ttDManalysis")
 process.load("FWCore.MessageService.MessageLogger_cfi")
 # Output Report
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-
+# Number of maximum events to process
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvts) )
 
 process.source = cms.Source("PoolSource",
@@ -31,43 +31,27 @@ process.source = cms.Source("PoolSource",
     )
 )
 
-#pat.selectedMuons = cms.EDFilter()
-
-# Select leptons
-#process.selectedPatMuons.cut = (
-#        "pt > 10 && abs(eta) < 2.4"
-#        )
-
-#process.selectedPatElectrons.cut = (
-#        "pt > 10 && abs(eta) < 2.5"
-#        )
-
-#process.selectedPatJets.cut = (
-#        "pt > 10 && abs(eta) < 2.5"
-#        )
-
-
 # Selected leptons
-process.selectedPatMuons = cms.EDFilter(
+process.skimmedPatMuons = cms.EDFilter(
         "PATMuonSelector",
             src = cms.InputTag("selectedPatMuons"),
-            cut = cms.string("pt > 10 && abs(eta) < 2.4")
+            cut = cms.string("pt > 20 && abs(eta) < 2.4")
         )
 
-process.selectedPatElectrons = cms.EDFilter(
+process.skimmedPatElectrons = cms.EDFilter(
         "PATElectronSelector",
             src = cms.InputTag("selectedPatElectrons"),
-            cut = cms.string("pt > 10 && abs(eta) < 2.5")
+            cut = cms.string("pt > 20 && abs(eta) < 2.5")
         )
 
 
 process.topDMana = cms.EDAnalyzer('TopPlusDMAna',
-                              electronLabel = cms.InputTag("selectedPatElectrons"),
-                              muonLabel = cms.InputTag("selectedPatMuons"),
+                              electronLabel = cms.InputTag("skimmedPatElectrons"),
+                              muonLabel = cms.InputTag("skimmedPatMuons"),
                               outputFile = cms.string("analysisTTDM.root"),
                               pv   = cms.InputTag("goodOfflinePrimaryVertices"),
                               ptmin     = cms.double(10)
 )
 
 
-process.p = cms.Path(process.topDMana)
+process.p = cms.Path(process.skimmedPatMuons + process.skimmedPatElectrons + process.topDMana)

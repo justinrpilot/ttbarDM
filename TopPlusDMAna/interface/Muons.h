@@ -28,16 +28,16 @@ class Muons {
   
   edm::InputTag muLabel_;
   edm::InputTag pvLabel_;
-  float ptmin_;
+  double ptmin_;
   
   
   static const int nMuonMAX = 100;
   int nMuon;
-  float muPt[nMuonMAX];
-  float muEta[nMuonMAX];
-  float muPhi[nMuonMAX];
+  double muPt[nMuonMAX];
+  double muEta[nMuonMAX];
+  double muPhi[nMuonMAX];
   int muCharge[nMuonMAX];
-  float muPFiso[nMuonMAX];
+  double muPFiso[nMuonMAX];
   bool muisSoft[nMuonMAX];
   bool muisLoose[nMuonMAX];
   bool muisTight[nMuonMAX];

@@ -16,9 +16,9 @@ Electrons::~Electrons() {
 void Electrons::defineBranch(TTree* tree) {
   
   tree->Branch("nElectron",&nElectron, "nElectron/I");
-  tree->Branch("elePt",elePt,"elePt[nElectron]/F");
-  tree->Branch("eleEta",eleEta,"eleEta[nElectron]/F");
-  tree->Branch("elePhi",elePhi,"elePhi[nElectron]/F");
+  tree->Branch("elePt",elePt,"elePt[nElectron]/D");
+  tree->Branch("eleEta",eleEta,"eleEta[nElectron]/D");
+  tree->Branch("elePhi",elePhi,"elePhi[nElectron]/D");
   tree->Branch("eleCharge",eleCharge,"eleCharge[nElectron]/I");
 
 }
