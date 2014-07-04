@@ -1,4 +1,6 @@
 #include "ttbarDM/TopPlusDMAna/interface/Muons.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
 
 // dR and dPhi                                                                                                                                                                       
 #include "DataFormats/Math/interface/deltaR.h"
@@ -11,20 +13,25 @@
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 
+using namespace reco;
+using namespace edm;
 
 Muons::Muons(const edm::ParameterSet& iConfig):
   //edm::ParameterSet conf = iConfig.getParameter<edm::ParameterSet>("muonBlock");
   muLabel_(iConfig.getParameter<edm::InputTag>("muonLabel")),
-  pvLabel_(iConfig.getParameter<edm::InputTag>("pv")),   // "offlinePrimaryVertex"
-  ptmin_(iConfig.getParameter<double>("ptmin"))
-{}
+  pvLabel_(iConfig.getParameter<edm::InputTag>("pv"))   // "offlinePrimaryVertex"
+ {
+   Service<TFileService> fs;
+   tree = fs->make<TTree>("Muons","Muons");
+ }
 
 Muons::~Muons() {
 
 }
 
-void Muons::defineBranch(TTree* tree) {
-
+void 
+Muons::beginJob() {
+ 
   tree->Branch("nMuon",    &nMuon,      "nMuon/I");
   tree->Branch("muPt",    muPt,     "muPt[nMuon]/D");
   tree->Branch("muEta",   muEta,    "muEta[nMuon]/D");
@@ -38,52 +45,61 @@ void Muons::defineBranch(TTree* tree) {
 }
 
 
-bool Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+void Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
     
+  //PV
   edm::Handle<std::vector<reco::Vertex> > pvHandle;
   iEvent.getByLabel(pvLabel_, pvHandle);
 
-  if(!pvHandle.isValid()) {
-    std::cout << " - No Primary Vertex" << std::endl;
-    return true;
-  }
-  size_t nPV=pvHandle->size();
-  std::cout<<"Number of primary vertices: "<<nPV<<std::endl;
+  //if(!pvHandle.isValid()) {
+    //    std::cout << " - No Primary Vertex" << std::endl;
+  //}
+  //size_t nPV=pvHandle->size();
+  //std::cout<<"Number of primary vertices: "<<nPV<<std::endl;
   const reco::Vertex* vertex=&pvHandle->front();
 
+  //Muons
   edm::Handle<std::vector<pat::Muon> > muonHandle;
   iEvent.getByLabel(muLabel_, muonHandle);
   std::vector<pat::Muon> const & muons = *muonHandle;  
-
-  nMuon = 0;
-  for(std::vector<pat::Muon>::const_iterator imuon = muons.begin(); imuon!= muons.end() && nMuon < nMuonMAX ; ++imuon) {
-
-    //    if (imuon->pt() < ptmin_) continue;
-    //if (fabs(imuon->eta() ) < 2.4 ) continue;
+   nMuon = 0;
+  for(std::vector<pat::Muon>::const_iterator mm = muons.begin(); mm!= muons.end() && nMuon < nMuonMAX ; ++mm) {
 
     float pfIso = 0.;
-    // (imuon.pfIsolationR04().sumChargedHadronPt + std::max(imuon.pfIsolationR04().sumNeutralHadronEt + imuon.pfIsolationR04().sumPhotonEt - 0.5*imuon.pfIsolationR04().sumPUPt, 0.) ) / imuon.pt(); // from PAT
-    const pat::Muon* mu = &(*imuon);
+
+    const pat::Muon* mu = &(*mm);
     bool isTight = isTightMuon(mu, vertex);
     bool isSoft = isSoftMuon(mu, vertex);
     bool isLoose = isLooseMuon(mu);
-
-    muPt    [nMuon] = imuon->pt();
-
-    muEta   [nMuon] = imuon->eta();
-    muPhi   [nMuon] = imuon->phi();
-    muCharge[nMuon] = imuon->charge();    
+    // std::cout<<"Muon Pt"<<mm->pt()<<std::endl;
+    muPt    [nMuon] = mm->pt();
+    muEta   [nMuon] = mm->eta();
+    muPhi   [nMuon] = mm->phi();
+    muCharge[nMuon] = mm->charge();    
     muPFiso[nMuon]  = pfIso;
     muisSoft[nMuon]  = isSoft;
     muisLoose[nMuon]  = isLoose;
     muisTight[nMuon]  = isTight;
 
-
+    //std::cout<<"Filling muons"<<std::endl;
     nMuon ++; 
+
+    // (mm.pfIsolationR04().sumChargedHadronPt + std::max(mm.pfIsolationR04().sumNeutralHadronEt + mm.pfIsolationR04().sumPhotonEt - 0.5*mm.pfIsolationR04().sumPUPt, 0.) ) / mm.pt(); // from PAT
   }
   
-  return true;
+  tree->Fill();
+
 }
+
+// ------------ method called once each job just after ending the event loop  ------------
+void 
+Muons::endJob() 
+{
+
+   tree->Write();
+   
+}
+
 
 bool
 Muons::isLooseMuon(const pat::Muon* muon) {
@@ -114,3 +130,6 @@ Muons::isTightMuon(const pat::Muon* muon, const reco::Vertex* vertex) {
     ;
 }
 
+
+
+DEFINE_FWK_MODULE(Muons);

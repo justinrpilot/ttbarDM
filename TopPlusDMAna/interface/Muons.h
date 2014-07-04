@@ -1,8 +1,8 @@
-#ifndef MUONS_H
-#define MUONS_H
-
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 // Muons
 #include "DataFormats/PatCandidates/interface/Muon.h"
@@ -11,16 +11,17 @@
 #include "TClonesArray.h"
 #include "TLorentzVector.h"
 
-class Muons {
+class Muons  : public edm::EDAnalyzer {
  public:
 
-  Muons(const edm::ParameterSet&);
-  virtual ~Muons();
+  explicit Muons(const edm::ParameterSet&);
+  ~Muons();
 
-  void defineBranch(TTree* tree);
-  bool analyze(const edm::Event&, const edm::EventSetup&);
+   private:
 
- private:
+  virtual void beginJob() ;
+  virtual void analyze(const edm::Event&, const edm::EventSetup&);
+  virtual void endJob() ;  
   
   bool isLooseMuon(const pat::Muon*);
   bool isSoftMuon (const pat::Muon*, const reco::Vertex*);
@@ -28,8 +29,8 @@ class Muons {
   
   edm::InputTag muLabel_;
   edm::InputTag pvLabel_;
-  double ptmin_;
-  
+
+  TTree *tree;
   
   static const int nMuonMAX = 100;
   int nMuon;
@@ -46,4 +47,3 @@ class Muons {
   
 };
 
-#endif

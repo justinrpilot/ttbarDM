@@ -1,4 +1,6 @@
 #include "ttbarDM/TopPlusDMAna/interface/Electrons.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
 
 using namespace reco;
 using namespace edm;
@@ -7,13 +9,15 @@ Electrons::Electrons(const edm::ParameterSet& iConfig):
   //  m_electronSrc = iConfig.getUntrackedParameter<edm::InputTag>("electron",edm::InputTag("selectedPatElectrons"));
   eleLabel_(iConfig.getParameter<edm::InputTag>("electronLabel"))
 {
+   Service<TFileService> fs;
+   tree = fs->make<TTree>("Electrons","Electrons");
 }
 
 Electrons::~Electrons() {
 
 }
 
-void Electrons::defineBranch(TTree* tree) {
+void Electrons::beginJob() {
   
   tree->Branch("nElectron",&nElectron, "nElectron/I");
   tree->Branch("elePt",elePt,"elePt[nElectron]/D");
@@ -24,11 +28,13 @@ void Electrons::defineBranch(TTree* tree) {
 }
 
 
-bool Electrons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+void Electrons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
     
   edm::Handle<std::vector<pat::Electron> > electronHandle; //to be replaced with PAT
   iEvent.getByLabel(eleLabel_, electronHandle);
   std::vector<pat::Electron> const & electrons = *electronHandle;
+
+
 
   nElectron = 0;
 
@@ -40,15 +46,23 @@ bool Electrons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nElectron++;
   }
   
+  tree->Fill();
   
-  return true;
+}
+
+// ------------ method called once each job just after ending the event loop  ------------
+void 
+Electrons::endJob() 
+{
+
+   tree->Write();
+   
 }
 
 
 
 
-
-
+DEFINE_FWK_MODULE(Electrons);
 
 
 

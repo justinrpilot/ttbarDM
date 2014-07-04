@@ -1,7 +1,5 @@
-#include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
-#include "FWCore/Framework/interface/MakerMacros.h"
+
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 
@@ -12,7 +10,11 @@
 #include "DataFormats/GsfTrackReco/interface/GsfTrack.h"
 #include "TrackingTools/PatternTools/interface/TSCPBuilderNoMaterial.h"
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
-#include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "DataFormats/TrackingRecHit/interface/TrackingRecHit.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
@@ -20,40 +22,40 @@
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "RecoEcal/EgammaCoreTools/interface/EcalClusterLazyTools.h"
 
-//Pat Electrons
-#include "DataFormats/PatCandidates/interface/Electron.h"
+//GenParticle
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 #include "TTree.h"
 #include "TClonesArray.h"
 #include "TLorentzVector.h"
 
-class Electrons : public edm::EDAnalyzer  {
+class GenParticles  : public edm::EDAnalyzer {
  public:
 
-  explicit Electrons(const edm::ParameterSet&);
-  ~Electrons();
+  explicit GenParticles(const edm::ParameterSet&);
+  ~GenParticles();
 
- 
+  
  private:
 
- virtual void beginJob() ;
- virtual void analyze(const edm::Event&, const edm::EventSetup&);
- virtual void endJob() ;  
- edm::ESHandle<TransientTrackBuilder> trackBuilder_;
+  virtual void beginJob() ;
+  virtual void analyze(const edm::Event&, const edm::EventSetup&);
+  virtual void endJob() ;  
   
- TTree *tree;
-
- edm::InputTag eleLabel_;
+  TTree *tree;
+  
+  edm::InputTag genLabel_;
   
   
- static const int nElectronMAX = 100;
- int nElectron;
- double elePt[nElectronMAX];
- double eleEta[nElectronMAX];
- double elePhi[nElectronMAX];
- int eleCharge[nElectronMAX];
-
-  
+  static const int nGenMAX = 100;
+  int nGen;
+  double genPartPx[nGenMAX];
+  double genPartPy[nGenMAX];
+  double genPartPz[nGenMAX];
+  double genPartE[nGenMAX];
+  int genPartID[nGenMAX];
+  int genPartStatus[nGenMAX];
+  int genPartMomID[nGenMAX];
   
 };
 
