@@ -23,10 +23,6 @@ class Muons  : public edm::EDAnalyzer {
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   virtual void endJob() ;  
   
-  bool isLooseMuon(const pat::Muon*);
-  bool isSoftMuon (const pat::Muon*, const reco::Vertex*);
-  bool isTightMuon(const pat::Muon*, const reco::Vertex*);
-  
   edm::InputTag muLabel_;
   edm::InputTag pvLabel_;
 

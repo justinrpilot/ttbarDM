@@ -56,7 +56,7 @@ void Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
   //}
   //size_t nPV=pvHandle->size();
   //std::cout<<"Number of primary vertices: "<<nPV<<std::endl;
-  const reco::Vertex* vertex=&pvHandle->front();
+  const reco::Vertex& PV= pvHandle->front();
 
   //Muons
   edm::Handle<std::vector<pat::Muon> > muonHandle;
@@ -67,10 +67,11 @@ void Muons::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
     float pfIso = 0.;
 
-    const pat::Muon* mu = &(*mm);
-    bool isTight = isTightMuon(mu, vertex);
-    bool isSoft = isSoftMuon(mu, vertex);
-    bool isLoose = isLooseMuon(mu);
+    //const pat::Muon* mu = &(*mm);
+    bool isTight = mm->isTightMuon(PV);
+    //    bool isTight = mu -> isTightMuon(mu, vertex);
+    bool isSoft = mm->isSoftMuon(PV);
+    bool isLoose = mm->isLooseMuon();
     // std::cout<<"Muon Pt"<<mm->pt()<<std::endl;
     muPt    [nMuon] = mm->pt();
     muEta   [nMuon] = mm->eta();
@@ -98,36 +99,6 @@ Muons::endJob()
 
    tree->Write();
    
-}
-
-
-bool
-Muons::isLooseMuon(const pat::Muon* muon) {
-  return muon->isPFMuon() && (muon->isGlobalMuon() || muon->isTrackerMuon());
-}
-
-bool
-Muons::isSoftMuon(const pat::Muon* muon, const reco::Vertex* vertex) {
-  return  muon::isGoodMuon(*muon, muon::TMOneStationTight)
-    && muon->track()->hitPattern().trackerLayersWithMeasurement()       > 5
-    && muon->innerTrack()->hitPattern().pixelLayersWithMeasurement()    > 1
-    && muon->muonBestTrack()->normalizedChi2()                          < 1.8
-    && muon->innerTrack()->dxy(vertex->position())                      < 3.
-    && muon->innerTrack()->dz(vertex->position())                       < 30.
-    ;
-}
-bool 
-Muons::isTightMuon(const pat::Muon* muon, const reco::Vertex* vertex) {
-  return  muon->isGlobalMuon()
-    && muon->isPFMuon()
-    && muon->muonBestTrack()->normalizedChi2()                          < 10.
-    && (muon->globalTrack().isNonnull() ? muon->globalTrack()->hitPattern().numberOfValidMuonHits() : -1)        > 0
-    && muon->numberOfMatchedStations()                                  > 1
-    && fabs(muon->muonBestTrack()->dxy(vertex->position()))             < 0.2
-    && fabs(muon->muonBestTrack()->dz(vertex->position()))              < 0.5
-    && muon->innerTrack()->hitPattern().numberOfValidPixelHits()        > 0
-    && muon->track()->hitPattern().trackerLayersWithMeasurement()       > 5
-    ;
 }
 
 
