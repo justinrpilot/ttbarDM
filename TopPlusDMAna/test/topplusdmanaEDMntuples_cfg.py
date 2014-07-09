@@ -80,6 +80,13 @@ process.jetFilter = cms.EDFilter("CandViewCountFilter",
 )
 
 
+process.muonUserData = cms.EDProducer(
+    'MuonUserData',
+    muonLabel = cms.InputTag("skimmedPatMuons"),
+    pv        = cms.InputTag("goodOfflinePrimaryVertices")
+    )
+
+
 
 
 ### Including ntuplizer 
@@ -96,8 +103,9 @@ process.analysisPath = cms.Path(
     process.skimmedPatMuons +
     process.skimmedPatJets +
     process.jetFilter +
-    process.muons+
-    process.electrons+
+    process.muonUserData +
+    process.muons +
+    process.electrons +
     process.jets
 
 )

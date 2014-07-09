@@ -1,12 +1,12 @@
 import FWCore.ParameterSet.Config as cms
 import copy
 
-
+#### basic set of variables which are commons to all the objects
 basic =  cms.EDProducer(
     "CandViewNtpProducer",
     src=cms.InputTag("skimmedPatMuons"),
     lazyParser=cms.untracked.bool(True),
-    prefix=cms.untracked.string("mu"),
+    prefix=cms.untracked.string("basic"),
     eventInfo=cms.untracked.bool(True),
     variables = cms.VPSet(
     cms.PSet(
@@ -36,22 +36,24 @@ basic =  cms.EDProducer(
     )
     )
 
+### muon variables 
 muonVars = (
-    
+
     cms.PSet(
     tag = cms.untracked.string("isSoftMuon"),
-    quantity = cms.untracked.string("isSoftMuon")
+    quantity = cms.untracked.string("userFloat('isSoftMuon')")
     ),
     cms.PSet(
     tag = cms.untracked.string("isLooseMuon"),
-    quantity = cms.untracked.string("isLooseMuon")
+    quantity = cms.untracked.string("userFloat('isLooseMuon')")
     ),
     cms.PSet(
     tag = cms.untracked.string("isTightMuon"),
-    quantity = cms.untracked.string("isTightMuon")
+    quantity = cms.untracked.string("userFloat('isTightMuon')")
     ),
     )
 
+### jet variables
 jetVars = (
     
     cms.PSet(
@@ -64,16 +66,23 @@ jetVars = (
     ),
     )
 
-    
-muons = copy.deepcopy(basic)
-#muons.variables += muonVars
-muons.src = cms.InputTag("skimmedPatMuons")
 
+### copying the muon set of variables from basic,
+### adding the set of variable which are related to muons only
+muons = copy.deepcopy(basic)
+muons.variables += muonVars
+muons.prefix = cms.untracked.string("mu")
+muons.src = cms.InputTag("muonUserData")
+
+###electrons
 electrons = copy.deepcopy(basic)
+electrons.prefix = cms.untracked.string("el")
 electrons.src = cms.InputTag("skimmedPatElectrons")
 
+###jets
 jets = copy.deepcopy(basic)
 jets.variables += jetVars
+jets.prefix = cms.untracked.string("jet")
 jets.src = cms.InputTag("skimmedPatJets")
 
 
