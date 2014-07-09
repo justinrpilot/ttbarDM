@@ -66,6 +66,16 @@ jetVars = (
     ),
     )
 
+genPartVars = (
+    cms.PSet(
+    tag = cms.untracked.string("ID"),
+    quantity = cms.untracked.string("pdgId")
+    ),
+    cms.PSet(
+    tag = cms.untracked.string("Status"),
+    quantity = cms.untracked.string("status")
+    ),
+    )
 
 ### copying the muon set of variables from basic,
 ### adding the set of variable which are related to muons only
@@ -85,12 +95,18 @@ jets.variables += jetVars
 jets.prefix = cms.untracked.string("jet")
 jets.src = cms.InputTag("skimmedPatJets")
 
+###genPart
+genPart = copy.deepcopy(basic)
+genPart.variables += genPartVars
+genPart.prefix = cms.untracked.string("genPart")
+genPart.src = cms.InputTag("prunedGenParticles")
 
 edmNtuplesOut = cms.OutputModule(
     "PoolOutputModule",
     fileName = cms.untracked.string('TTbarDMEdmNtuples.root'),
     outputCommands = cms.untracked.vstring(
     "drop *",
+    "keep *_genPart_*_*",
     "keep *_muons_*_*",
     "keep *_electrons_*_*",
     "keep *_jets_*_*"

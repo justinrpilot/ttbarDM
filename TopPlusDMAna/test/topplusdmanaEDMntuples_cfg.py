@@ -104,6 +104,7 @@ process.analysisPath = cms.Path(
     process.skimmedPatJets +
     process.jetFilter +
     process.muonUserData +
+    process.genPart +
     process.muons +
     process.electrons +
     process.jets
