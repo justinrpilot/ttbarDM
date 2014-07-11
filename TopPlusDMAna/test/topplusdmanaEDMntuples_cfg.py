@@ -67,7 +67,7 @@ process.skimmedPatElectrons = cms.EDFilter(
     )
 
 process.skimmedPatJets = cms.EDFilter(
-    "PATJetSelector",
+    "CandViewSelector",
     src = cms.InputTag("goodPatJetsPFlow"),
     cut = cms.string("pt > 25 && abs(eta) < 2.4")
     )
@@ -77,6 +77,7 @@ process.skimmedPatJets = cms.EDFilter(
 process.jetFilter = cms.EDFilter("CandViewCountFilter",
     src = cms.InputTag("skimmedPatJets"),
     minNumber = cms.uint32(2),
+    filter = cms.bool(True)
 )
 
 
@@ -93,16 +94,13 @@ process.muonUserData = cms.EDProducer(
 process.load("ttbarDM.TopPlusDMAna.topplusdmedmNtuples_cff")
 
 
-## ### Creating the filter path to use in order to select events
-## process.filterPath = cms.Path(
-##     process.jetFilter
-##     )
+
 ### definition of Analysis sequence
 process.analysisPath = cms.Path(
     process.skimmedPatElectrons +
     process.skimmedPatMuons +
     process.skimmedPatJets +
-    process.jetFilter +
+    #process.jetFilter +
     process.muonUserData +
     process.genPart +
     process.muons +
@@ -111,14 +109,24 @@ process.analysisPath = cms.Path(
 
 )
 
+### Creating the filter path to use in order to select events
+process.filterPath = cms.Path(
+    process.jetFilter
+    )
 
-## process.edmNtuplesOut.SelectEvents = cms.untracked.PSet(
-##     SelectEvents = cms.vstring('filterPath')
-##     )
+
+process.edmNtuplesOut.SelectEvents = cms.untracked.PSet(
+    SelectEvents = cms.vstring('filterPath')
+    )
+
+process.fullPath = cms.Schedule(
+    process.analysisPath,
+    process.filterPath
+    )
 
 process.endPath = cms.EndPath(process.edmNtuplesOut)
 
-process.schedule = cms.Schedule(
-    process.analysisPath,
-    process.endPath
-    )
+## process.outpath = cms.Schedule(
+##     process.analysisPath,
+##     process.endPath
+##     )
