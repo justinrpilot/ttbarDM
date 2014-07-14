@@ -69,21 +69,21 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     pat::Muon & m = (*muonColl)[i];
 
     bool isTightMuon = 0;
-    bool isSoftMuon = 0;
+    bool isSoftMuon  = 0;
     bool isLooseMuon = 0;
    
        
     isTightMuon = m.isTightMuon(PV);
-    isSoftMuon = m.isSoftMuon(PV);
+    isSoftMuon  = m.isSoftMuon(PV);
     isLooseMuon = m.isLooseMuon();
     
-    m.addUserFloat("isSoftMuon", isSoftMuon);
-    m.addUserFloat("isSoftMuon", isLooseMuon);
-    m.addUserFloat("isSoftMuon", isTightMuon);
+    m.addUserFloat("isSoftMuon",  isSoftMuon);
+    m.addUserFloat("isLooseMuon", isLooseMuon);
+    m.addUserFloat("isTightMuon", isTightMuon);
 
   }
 
- iEvent.put( muonColl);
+ iEvent.put( muonColl );
 
 }
 
