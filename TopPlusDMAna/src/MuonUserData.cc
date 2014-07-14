@@ -11,7 +11,8 @@
 #include "DataFormats/Math/interface/deltaPhi.h"
 
 // Muons
-#include "ttbarDM/TopPlusDMAna/interface/Muons.h"
+//#include "ttbarDM/TopPlusDMAna/interface/Muons.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonPFIsolation.h"
 
 // Vertex

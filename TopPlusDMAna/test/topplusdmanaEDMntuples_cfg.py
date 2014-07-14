@@ -57,7 +57,7 @@ process.source = cms.Source("PoolSource",
 process.skimmedPatMuons = cms.EDFilter(
     "PATMuonSelector",
     src = cms.InputTag("selectedPatMuons"),
-    cut = cms.string("pt > 60 && abs(eta) < 2.4")
+    cut = cms.string("pt > 30 && abs(eta) < 2.4")
     )
 
 process.skimmedPatElectrons = cms.EDFilter(
