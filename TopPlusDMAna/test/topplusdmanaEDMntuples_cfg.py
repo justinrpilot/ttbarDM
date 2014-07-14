@@ -1,7 +1,7 @@
 ### *****************************************************************************************
 ### Usage:
 ###
-### cmsRun topplusdmana_cfg.py maxEvts=N sample="mySample/sample.root" outputLabel="myoutput"
+### cmsRun topplusdmanaEDMntuples_cfg.py maxEvts=N sample="mySample/sample.root" outputLabel="myoutput"
 ###
 ### Default values for the options are set:
 ### maxEvts     = -1
@@ -23,7 +23,9 @@ options.register('maxEvts',
 
 options.register('sample',
 #                 'file:/scratch/decosa/ttDM/testSample/patTuple_tlbsm_train_tlbsm_71x_v1.root',
-                 'file:/scratch/decosa/ttDM/testSample/tlbsm_53x_v3_mc_10_1_qPV.root',
+#                 'file:/scratch/decosa/ttDM/testSample/tlbsm_53x_v3_mc_10_1_qPV.root',
+#                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
                  #'file:/scratch/decosa/ttDM/testSample/AOD_ttDM_53.root',
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
