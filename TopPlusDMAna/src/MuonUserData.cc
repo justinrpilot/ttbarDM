@@ -50,7 +50,6 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   edm::Handle<std::vector<reco::Vertex> > pvHandle;
   iEvent.getByLabel(pvLabel_, pvHandle);
 
-
   //Muons
   edm::Handle<std::vector<pat::Muon> > muonHandle;
   iEvent.getByLabel(muLabel_, muonHandle);
@@ -68,18 +67,32 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   for (unsigned int i = 0; i< muonColl->size();++i){
     pat::Muon & m = (*muonColl)[i];
 
-    bool isTightMuon = 0;
-    bool isSoftMuon  = 0;
-    bool isLooseMuon = 0;
-   
-       
-    isTightMuon = m.isTightMuon(PV);
-    isSoftMuon  = m.isSoftMuon(PV);
-    isLooseMuon = m.isLooseMuon();
-    
-    m.addUserFloat("isSoftMuon",  isSoftMuon);
-    m.addUserFloat("isLooseMuon", isLooseMuon);
-    m.addUserFloat("isTightMuon", isTightMuon);
+    // muon ID
+    //    bool isTightMuon = m.isTightMuon(PV);
+    //    bool isSoftMuon  = m.isSoftMuon(PV) ;
+    //    bool isLooseMuon = m.isLooseMuon()  ;
+
+    // impact parameters
+    double d0    = m.dB (pat::Muon::PV2D);
+    double d0err = m.edB(pat::Muon::PV2D);
+    double dz    = fabs(m.vz()-PV.z());
+
+    // isolation (delta beta corrections)
+    // https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Accessing_PF_Isolation_from_reco
+    double sumChargedHadronPt = m.pfIsolationR04().sumChargedHadronPt;
+    double sumNeutralHadronPt = m.pfIsolationR04().sumNeutralHadronEt;
+    double sumPhotonPt        = m.pfIsolationR04().sumPhotonEt;
+    double sumPUPt            = m.pfIsolationR04().sumPUPt;
+    double pt                 = m.pt();
+    double iso04 = sumChargedHadronPt+TMath::Max(0.,sumNeutralHadronPt+sumPhotonPt-0.5*sumPUPt)/pt;
+
+    //    m.addUserFloat("isSoftMuon",  isSoftMuon);
+    //    m.addUserFloat("isLooseMuon", isLooseMuon);
+    //    m.addUserFloat("isTightMuon", isTightMuon);
+    m.addUserFloat("d0",          d0);
+    m.addUserFloat("d0err",       d0err);
+    m.addUserFloat("dz",          dz);
+    m.addUserFloat("iso04",       iso04);
 
   }
 

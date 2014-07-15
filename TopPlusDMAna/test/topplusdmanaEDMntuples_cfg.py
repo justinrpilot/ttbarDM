@@ -22,14 +22,18 @@ options.register('maxEvts',
                  'Number of events to process')
 
 options.register('sample',
-#                 'file:/scratch/decosa/ttDM/testSample/patTuple_tlbsm_train_tlbsm_71x_v1.root',
-#                 'file:/scratch/decosa/ttDM/testSample/tlbsm_53x_v3_mc_10_1_qPV.root',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
                  'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
-                 #'file:/scratch/decosa/ttDM/testSample/AOD_ttDM_53.root',
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
                  'Sample to analyze')
+
+options.register('version',
+                 '53',
+                 #'71',
+                 opts.VarParsing.multiplicity.singleton,
+                 opts.VarParsing.varType.string,
+                 'ntuple version (53 or 71)')
 
 options.register('outputLabel',
                  'analysisTTDM.root',
@@ -68,10 +72,16 @@ process.skimmedPatElectrons = cms.EDFilter(
     cut = cms.string("pt > 30 && abs(eta) < 2.5")
     )
 
+if options.version=="53" :
+    jetLabel="goodPatJetsPFlow"
+elif options.version=="71" :
+    jetLabel="goodPatJets"
 process.skimmedPatJets = cms.EDFilter(
     "CandViewSelector",
-    src = cms.InputTag("goodPatJetsPFlow"),
-    cut = cms.string("pt > 25 && abs(eta) < 2.4")
+    src = cms.InputTag(jetLabel),
+#    src = cms.InputTag("goodPatJetsPFlow"), # 53x
+#    src = cms.InputTag("goodPatJets"), # 71x    
+    cut = cms.string("pt > 25 && abs(eta) < 4.")
     )
 
 
@@ -82,34 +92,30 @@ process.jetFilter = cms.EDFilter("CandViewCountFilter",
     filter = cms.bool(True)
 )
 
-
 process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
     pv        = cms.InputTag("goodOfflinePrimaryVertices")
-    )
-
+)
 
 
 
 ### Including ntuplizer 
 process.load("ttbarDM.TopPlusDMAna.topplusdmedmNtuples_cff")
 
-
-
 ### definition of Analysis sequence
 process.analysisPath = cms.Path(
     process.skimmedPatElectrons +
     process.skimmedPatMuons +
-    process.skimmedPatJets +
-    #process.jetFilter +
-    process.muonUserData +
-    process.genPart +
-    process.muons +
-    process.electrons +
-    process.jets
-
+    process.skimmedPatJets 
 )
+
+#process.analysisPath+=process.jetFilter
+process.analysisPath+=process.muonUserData
+process.analysisPath+=process.genPart
+process.analysisPath+=process.muons
+process.analysisPath+=process.electrons
+process.analysisPath+=process.jets
 
 ### Creating the filter path to use in order to select events
 process.filterPath = cms.Path(

@@ -38,20 +38,43 @@ basic =  cms.EDProducer(
 
 ### muon variables 
 muonVars = (
-
-    cms.PSet(
-    tag = cms.untracked.string("isSoftMuon"),
-    quantity = cms.untracked.string("userFloat('isSoftMuon')")
-    ),
-    cms.PSet(
-    tag = cms.untracked.string("isLooseMuon"),
-    quantity = cms.untracked.string("userFloat('isLooseMuon')")
-    ),
-    cms.PSet(
-    tag = cms.untracked.string("isTightMuon"),
-    quantity = cms.untracked.string("userFloat('isTightMuon')")
-    ),
-    )
+   cms.PSet(
+        tag = cms.untracked.string("Iso03"),
+        quantity = cms.untracked.string("userFloat('iso03')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("D0"),
+        quantity = cms.untracked.string("userFloat('d0')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("D0err"),
+        quantity = cms.untracked.string("userFloat('d0err')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("Dz"),
+        quantity = cms.untracked.string("userFloat('dz')")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("Dzerr"),
+        quantity = cms.untracked.string("userFloat('dzerr')")
+   ),
+### the following variables have been commented in the c++ code
+### because current version of B2G pattuple does not have track embedded in the pat::muon
+### and this makes the code crashing !!!!
+### [I tried to exploit the isNull() method, but w/o succeding :( ]   
+   cms.PSet(
+        tag = cms.untracked.string("IsSoftMuon"),
+        quantity = cms.untracked.string("userFloat('isSoftMuon')")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("IsLooseMuon"),
+        quantity = cms.untracked.string("userFloat('isLooseMuon')")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("IsTightMuon"),
+        quantity = cms.untracked.string("userFloat('isTightMuon')")
+        ),
+   )
 
 ### jet variables
 jetVars = (
@@ -89,6 +112,7 @@ muons = copy.deepcopy(basic)
 muons.variables += muonVars
 muons.prefix = cms.untracked.string("mu")
 muons.src = cms.InputTag("muonUserData")
+#muons.src = cms.InputTag("skimmedPatMuons")
 
 ###electrons
 electrons = copy.deepcopy(basic)
