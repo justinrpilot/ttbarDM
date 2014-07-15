@@ -17,7 +17,6 @@
 <use   name="DataFormats/RecoCandidate"/>
 <use   name="DataFormats/TrackReco"/>
 <use   name="DataFormats/FEDRawData"/>
-<use   name="DataFormats/VertexReco"/>
 <use   name="EventFilter/HcalRawToDigi"/>
 <use   name="Geometry/CaloGeometry"/>
 <use   name="Geometry/CaloTopology"/>
@@ -46,7 +45,6 @@
 <use   name="CondFormats/DataRecord"/>
 <use   name="Geometry/TrackerGeometryBuilder"/>
 <use   name="DataFormats/HLTReco"/>
-<use   name="DataFormats/MuonReco"/>
 <use   name="DataFormats/EgammaCandidates"/>
 <use   name="TrackingTools/TransientTrack"/>
 <use   name="TrackingTools/TrackAssociator"/>
@@ -68,5 +66,3 @@
 <use name="DataFormats/MuonReco">
 <use name="DataFormats/VertexReco">
 <flags   EDM_PLUGIN="1"/>
-<export>
-</export>
