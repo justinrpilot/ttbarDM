@@ -1,7 +1,7 @@
 ### *****************************************************************************************
 ### Usage:
 ###
-### cmsRun topplusdmanaEDMntuples_cfg.py maxEvts=N sample="mySample/sample.root" outputLabel="myoutput"
+### cmsRun topplusdmanaEDMntuples_cfg.py maxEvts=N sample="mySample/sample.root" version="71" outputLabel="myoutput"
 ###
 ### Default values for the options are set:
 ### maxEvts     = -1
@@ -98,7 +98,16 @@ process.muonUserData = cms.EDProducer(
     pv        = cms.InputTag("goodOfflinePrimaryVertices")
 )
 
+from PhysicsTools.CandAlgos.EventShapeVars_cff import *
+process.eventShapePFVars = pfEventShapeVars.clone()
+process.eventShapePFVars.src = cms.InputTag("particleFlow")
 
+process.eventShapePFJetVars = pfEventShapeVars.clone()
+process.eventShapePFJetVars.src = cms.InputTag("skimmedPatJets")
+
+process.centrality = cms.EDProducer("CentralityUserData",
+   src = cms.InputTag("skimmedPatJets")
+)                                    
 
 ### Including ntuplizer 
 process.load("ttbarDM.TopPlusDMAna.topplusdmedmNtuples_cff")
@@ -107,7 +116,10 @@ process.load("ttbarDM.TopPlusDMAna.topplusdmedmNtuples_cff")
 process.analysisPath = cms.Path(
     process.skimmedPatElectrons +
     process.skimmedPatMuons +
-    process.skimmedPatJets 
+    process.skimmedPatJets +
+    process.eventShapePFVars +
+    process.eventShapePFJetVars +
+    process.centrality
 )
 
 #process.analysisPath+=process.jetFilter

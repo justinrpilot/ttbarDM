@@ -131,6 +131,31 @@ genPart.variables += genPartVars
 genPart.prefix = cms.untracked.string("genPart")
 genPart.src = cms.InputTag("prunedGenParticles")
 
+
+###event variables
+eventShapeVar = (
+   cms.PSet(
+        tag = cms.untracked.string("isotropy"),
+        quantity = cms.untracked.string("isotropy")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("circularity"),
+        quantity = cms.untracked.string("circularity")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("sphericity"),
+        quantity = cms.untracked.string("sphericity")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("aplanarity"),
+        quantity = cms.untracked.string("aplanarity")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("thrust"),
+        quantity = cms.untracked.string("thrust")
+   ),
+)
+
 edmNtuplesOut = cms.OutputModule(
     "PoolOutputModule",
     fileName = cms.untracked.string('TTbarDMEdmNtuples.root'),
@@ -139,8 +164,9 @@ edmNtuplesOut = cms.OutputModule(
     "keep *_genPart_*_*",
     "keep *_muons_*_*",
     "keep *_electrons_*_*",
-    "keep *_jets_*_*"
-    
+    "keep *_jets_*_*",
+    "keep *_eventShape*_*_*",
+    "keep *_*_*centrality*_*"
     ),
     dropMetaData = cms.untracked.string('ALL'),
     )
