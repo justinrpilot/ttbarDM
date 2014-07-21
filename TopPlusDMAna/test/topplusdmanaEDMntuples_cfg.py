@@ -92,6 +92,7 @@ process.jetFilter = cms.EDFilter("CandViewCountFilter",
     filter = cms.bool(True)
 )
 
+
 process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
@@ -128,6 +129,7 @@ process.analysisPath+=process.genPart
 process.analysisPath+=process.muons
 process.analysisPath+=process.electrons
 process.analysisPath+=process.jets
+process.analysisPath+=process.met
 
 ### Creating the filter path to use in order to select events
 process.filterPath = cms.Path(
