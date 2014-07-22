@@ -22,15 +22,15 @@ options.register('maxEvts',
                  'Number of events to process')
 
 options.register('sample',
-#                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
-                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
+                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+#                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
                  'Sample to analyze')
 
 options.register('version',
-                 '53',
-                 #'71',
+                 #'53',
+                 '71',
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
                  'ntuple version (53 or 71)')
@@ -41,8 +41,21 @@ options.register('outputLabel',
                  opts.VarParsing.varType.string,
                  'Output label')
 
+options.register('isData',
+                 False,
+                 opts.VarParsing.multiplicity.singleton,
+                 opts.VarParsing.varType.bool,
+                 'Is data?')
+
+options.register('LHE',
+                 False,
+                 opts.VarParsing.multiplicity.singleton,
+                 opts.VarParsing.varType.bool,
+                 'Keep LHEProducts')
+
 options.parseArguments()
 
+if(options.isData):options.LHE = False
 
 process = cms.Process("ttDManalysisEDMNtuples")
 
@@ -92,7 +105,6 @@ process.jetFilter = cms.EDFilter("CandViewCountFilter",
     filter = cms.bool(True)
 )
 
-
 process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
@@ -135,6 +147,17 @@ process.analysisPath+=process.met
 process.filterPath = cms.Path(
     process.jetFilter
     )
+
+
+### keep info from LHEProducts if they are stored in PatTuples
+if(options.LHE):
+    process.LHEUserData = cms.EDProducer("LHEUserData",
+        lheLabel = cms.InputTag("source")
+        )
+    process.analysisPath+=process.LHEUserData
+    process.edmNtuplesOut.outputCommand+=(' *_LHE*_*_*')
+
+### end LHE products     
 
 
 process.edmNtuplesOut.SelectEvents = cms.untracked.PSet(
