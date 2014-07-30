@@ -91,7 +91,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("d0err",       d0err);
     m.addUserFloat("dz",          dz);
     m.addUserFloat("iso04",       iso04);
-
+    
   }
 
  iEvent.put( muonColl );

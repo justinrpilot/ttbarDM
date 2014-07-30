@@ -84,10 +84,7 @@ muonVars = (
         tag = cms.untracked.string("Dzerr"),
         quantity = cms.untracked.string("userFloat('dzerr')")
         ),
-### the following variables have been commented in the c++ code
-### because current version of B2G pattuple does not have track embedded in the pat::muon
-### and this makes the code crashing !!!!
-### [I tried to exploit the isNull() method, but w/o succeding :( ]   
+### the following variables need have track embedded in the pat::muon
     cms.PSet(
     tag = cms.untracked.string("IsLooseMuon"),
     quantity = cms.untracked.string("isLooseMuon")
@@ -100,7 +97,25 @@ muonVars = (
     tag = cms.untracked.string("IsTightMuon"),
     quantity = cms.untracked.string("userFloat('isTightMuon')")
     ),
-    )
+## variables used in isolation
+## https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Accessing_PF_Isolation_from_reco   
+   cms.PSet(
+    tag = cms.untracked.string("SumChargedHadronPt"),
+    quantity = cms.untracked.string("pfIsolationR04().sumChargedHadronPt")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("SumNeutralHadronPt"),
+    quantity = cms.untracked.string("pfIsolationR04().sumNeutralHadronEt")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("SumPhotonPt"),
+    quantity = cms.untracked.string("pfIsolationR04().sumPhotonEt")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("SumPUPt"),
+    quantity = cms.untracked.string("pfIsolationR04().sumPUPt")
+   ),
+)
 
 ### jet variables
 jetVars = (
