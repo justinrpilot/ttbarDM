@@ -68,10 +68,9 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     pat::Muon & m = (*muonColl)[i];
 
     // muon ID
-    //    bool isTightMuon = m.isTightMuon(PV);
-    //    bool isSoftMuon  = m.isSoftMuon(PV) ;
-    //    bool isLooseMuon = m.isLooseMuon()  ;
-
+    bool isTightMuon = m.isTightMuon(PV);
+    bool isSoftMuon  = m.isSoftMuon(PV) ;
+    
     // impact parameters
     double d0    = m.dB (pat::Muon::PV2D);
     double d0err = m.edB(pat::Muon::PV2D);
@@ -86,9 +85,8 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     double pt                 = m.pt();
     double iso04 = sumChargedHadronPt+TMath::Max(0.,sumNeutralHadronPt+sumPhotonPt-0.5*sumPUPt)/pt;
 
-    //    m.addUserFloat("isSoftMuon",  isSoftMuon);
-    //    m.addUserFloat("isLooseMuon", isLooseMuon);
-    //    m.addUserFloat("isTightMuon", isTightMuon);
+    m.addUserFloat("isSoftMuon",  isSoftMuon);
+    m.addUserFloat("isTightMuon", isTightMuon);
     m.addUserFloat("d0",          d0);
     m.addUserFloat("d0err",       d0err);
     m.addUserFloat("dz",          dz);

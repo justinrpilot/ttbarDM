@@ -88,19 +88,19 @@ muonVars = (
 ### because current version of B2G pattuple does not have track embedded in the pat::muon
 ### and this makes the code crashing !!!!
 ### [I tried to exploit the isNull() method, but w/o succeding :( ]   
-   cms.PSet(
+    cms.PSet(
+    tag = cms.untracked.string("IsLooseMuon"),
+    quantity = cms.untracked.string("isLooseMuon")
+    ),
+    cms.PSet(
     tag = cms.untracked.string("IsSoftMuon"),
     quantity = cms.untracked.string("userFloat('isSoftMuon')")
     ),
-   cms.PSet(
-    tag = cms.untracked.string("IsLooseMuon"),
-    quantity = cms.untracked.string("userFloat('isLooseMuon')")
-    ),
-   cms.PSet(
+    cms.PSet(
     tag = cms.untracked.string("IsTightMuon"),
     quantity = cms.untracked.string("userFloat('isTightMuon')")
     ),
-   )
+    )
 
 ### jet variables
 jetVars = (
