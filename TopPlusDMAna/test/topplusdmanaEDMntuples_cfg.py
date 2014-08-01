@@ -71,6 +71,17 @@ process.source = cms.Source("PoolSource",
         )
 )
 
+process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
+from Configuration.AlCa.GlobalTag import GlobalTag as customiseGlobalTag
+process.GlobalTag = customiseGlobalTag(process.GlobalTag, globaltag = 'auto:startup_GRun')
+process.GlobalTag.connect   = 'frontier://FrontierProd/CMS_COND_31X_GLOBALTAG'
+process.GlobalTag.pfnPrefix = cms.untracked.string('frontier://FrontierProd/')
+for pset in process.GlobalTag.toGet.value():
+    pset.connect = pset.connect.value().replace('frontier://FrontierProd/', 'frontier://FrontierProd/')
+    #   Fix for multi-run processing:
+    process.GlobalTag.RefreshEachRun = cms.untracked.bool( False )
+    process.GlobalTag.ReconnectEachRun = cms.untracked.bool( False )
+    
 
 ### Selected leptons and jets
 process.skimmedPatMuons = cms.EDFilter(
@@ -108,7 +119,11 @@ process.jetFilter = cms.EDFilter("CandViewCountFilter",
 process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
-    pv        = cms.InputTag("goodOfflinePrimaryVertices")
+    pv        = cms.InputTag("goodOfflinePrimaryVertices"),
+    triggerResultsLabel = cms.InputTag("TriggerResults"),
+    triggerSummaryLabel = cms.InputTag("hltTriggerSummaryAOD"),
+    hltMuonFilterLabel  = cms.InputTag("hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"),
+    hltPath             = cms.string("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL"),
 )
 
 from PhysicsTools.CandAlgos.EventShapeVars_cff import *

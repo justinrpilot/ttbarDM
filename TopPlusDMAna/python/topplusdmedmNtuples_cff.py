@@ -64,6 +64,26 @@ met =  cms.EDProducer(
 
 ### muon variables 
 muonVars = (
+#   cms.PSet(
+#        tag = cms.untracked.string("dB"),
+#        quantity = cms.untracked.string("userFloat('dB')")
+#   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dBPV2D"),
+#        quantity = cms.untracked.string("userFloat('dBPV2D')")
+#   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dBPV3D"),
+#        quantity = cms.untracked.string("userFloat('dBPV3D')")
+#   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dBBS2D"),
+#        quantity = cms.untracked.string("userFloat('dBBS2D')")
+#   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dBBS3D"),
+#        quantity = cms.untracked.string("userFloat('dBBS3D')")
+#   ),
    cms.PSet(
         tag = cms.untracked.string("Iso03"),
         quantity = cms.untracked.string("userFloat('iso03')")
@@ -97,6 +117,55 @@ muonVars = (
     tag = cms.untracked.string("IsTightMuon"),
     quantity = cms.untracked.string("userFloat('isTightMuon')")
     ),
+## variables used in ID
+## https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Tight_Muon_selection
+   ### LOOSE
+   cms.PSet(
+    tag = cms.untracked.string("IsPFMuon"),
+    quantity = cms.untracked.string("isPFMuon")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("IsGlobalMuon"),
+    quantity = cms.untracked.string("isGlobalMuon")
+   ),   
+   cms.PSet(
+    tag = cms.untracked.string("IsTrackerMuon"),
+    quantity = cms.untracked.string("isTrackerMuon")
+   ),   
+   ### TIGHT
+   cms.PSet(
+    tag = cms.untracked.string("GlbTrkNormChi2"),
+    quantity = cms.untracked.string("? globalTrack.isNonnull ? globalTrack.normalizedChi2 : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("NumberValidMuonHits"),
+    quantity = cms.untracked.string("? globalTrack.isNonnull ? globalTrack.hitPattern.numberOfValidMuonHits : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("NumberMatchedStations"),
+    quantity = cms.untracked.string("numberOfMatchedStations")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("NumberValidPixelHits"),
+    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.numberOfValidPixelHits : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("NumberTrackerLayers"),
+    quantity = cms.untracked.string("? track.isNonnull ? track.hitPattern.trackerLayersWithMeasurement : 0")
+   ),
+   ### SOFT
+   cms.PSet(
+    tag = cms.untracked.string("NumberOfValidTrackerHits"),
+    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.numberOfValidTrackerHits : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("NumberOfPixelLayers"),
+    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.pixelLayersWithMeasurement : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("InTrkNormChi2"),
+    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.normalizedChi2 : 0")
+   ),
 ## variables used in isolation
 ## https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Accessing_PF_Isolation_from_reco   
    cms.PSet(
@@ -114,6 +183,40 @@ muonVars = (
    cms.PSet(
     tag = cms.untracked.string("SumPUPt"),
     quantity = cms.untracked.string("pfIsolationR04().sumPUPt")
+   ),
+### genLepton
+   cms.PSet(
+    tag = cms.untracked.string("GenMuonPx"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.px : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("GenMuonPy"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.py : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("GenMuonPz"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.pz : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("GenMuonE"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.energy : 0")
+   ),
+### trigger matching
+   cms.PSet(
+    tag = cms.untracked.string("TrigMuonPt"),
+    quantity = cms.untracked.string("userFloat('TrigMuonPt')")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("TrigMuonEta"),
+    quantity = cms.untracked.string("userFloat('TrigMuonEta')")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("TrigMuonPhi"),
+    quantity = cms.untracked.string("userFloat('TrigMuonPhi')")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("TrigMuonE"),
+    quantity = cms.untracked.string("userFloat('TrigMuonE')")
    ),
 )
 
