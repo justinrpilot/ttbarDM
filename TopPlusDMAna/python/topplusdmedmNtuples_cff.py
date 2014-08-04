@@ -287,7 +287,7 @@ electronVars = (
         ),
    cms.PSet(
         tag = cms.untracked.string("full5x5siee"),
-        quantity = cms.untracked.string("full5x5_sigmaEtaEta")
+        quantity = cms.untracked.string("full5x5_sigmaIetaIeta")
         ),
    cms.PSet(
         tag = cms.untracked.string("ooEmooP"),
