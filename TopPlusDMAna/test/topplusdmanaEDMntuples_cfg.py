@@ -133,8 +133,7 @@ process.electronUserData = cms.EDProducer(
     triggerResults = cms.InputTag("TriggerResults"),
     triggerSummary = cms.InputTag("hltTriggerSummaryAOD"),
     hltElectronFilter  = cms.InputTag("hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"),  ##trigger matching code to be fixed!
-    hltPath             = cms.string("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL"),
-  #  debugLevel = cms.untracked.int32(1)
+    hltPath             = cms.string("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL")
 )
 
 
