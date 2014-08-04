@@ -259,9 +259,57 @@ muons.src = cms.InputTag("muonUserData")
 #muons.src = cms.InputTag("skimmedPatMuons")
 
 ###electrons
+electronVars = (
+    ###Cut-based ID variables
+  cms.PSet(
+        tag = cms.untracked.string("Iso03"),
+        quantity = cms.untracked.string("userFloat('iso03')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("D0"),
+        quantity = cms.untracked.string("userFloat('d0')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("Dz"),
+        quantity = cms.untracked.string("userFloat('dz')")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("dEtaIn"),
+        quantity = cms.untracked.string("deltaEtaSuperClusterTrackAtVtx")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("dPhiIn"),
+        quantity = cms.untracked.string("deltaPhiSuperClusterTrackAtVtx")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("HoE"),
+        quantity = cms.untracked.string("hcalOverEcal")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("full5x5siee"),
+        quantity = cms.untracked.string("full5x5_sigmaEtaEta")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("ooEmooP"),
+        quantity = cms.untracked.string("userFloat('ooEmooP')")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("expectedMissInHits"),
+        quantity = cms.untracked.string("gsfTrack().trackerExpectedHitsInner().numberOfLostHits()")
+        ),
+   cms.PSet(
+        tag = cms.untracked.string("pssConVeto"),
+        quantity = cms.untracked.string("passConversionVeto")
+        )
+   
+)
+
+
 electrons = copy.deepcopy(basic)
+electrons.variables += electronVars
 electrons.prefix = cms.untracked.string("el")
-electrons.src = cms.InputTag("skimmedPatElectrons")
+electrons.src = cms.InputTag("electronUserData")
+
 
 ###jets
 jets = copy.deepcopy(basic)

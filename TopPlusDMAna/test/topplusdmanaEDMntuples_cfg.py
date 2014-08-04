@@ -120,11 +120,24 @@ process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
     pv        = cms.InputTag("goodOfflinePrimaryVertices"),
-    triggerResultsLabel = cms.InputTag("TriggerResults"),
-    triggerSummaryLabel = cms.InputTag("hltTriggerSummaryAOD"),
-    hltMuonFilterLabel  = cms.InputTag("hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"),
+    triggerResults = cms.InputTag("TriggerResults"),
+    triggerSummary = cms.InputTag("hltTriggerSummaryAOD"),
+    hltMuonFilter  = cms.InputTag("hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"),
     hltPath             = cms.string("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL"),
 )
+
+process.electronUserData = cms.EDProducer(
+    'ElectronUserData',
+    eleLabel = cms.InputTag("skimmedPatElectrons"),
+    pv        = cms.InputTag("goodOfflinePrimaryVertices"),
+    triggerResults = cms.InputTag("TriggerResults"),
+    triggerSummary = cms.InputTag("hltTriggerSummaryAOD"),
+    hltElectronFilter  = cms.InputTag("hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"),
+    hltPath             = cms.string("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL"),
+    debugLevel = cms.untracked.int32(1)
+)
+
+
 
 from PhysicsTools.CandAlgos.EventShapeVars_cff import *
 process.eventShapePFVars = pfEventShapeVars.clone()
@@ -151,9 +164,15 @@ process.analysisPath = cms.Path(
 )
 
 #process.analysisPath+=process.jetFilter
-process.analysisPath+=process.muonUserData
+
+
+#process.analysisPath+=process.muonUserData
+process.analysisPath+=process.electronUserData
+
 process.analysisPath+=process.genPart
-process.analysisPath+=process.muons
+
+#process.analysisPath+=process.muons
+
 process.analysisPath+=process.electrons
 process.analysisPath+=process.jets
 process.analysisPath+=process.met
