@@ -100,7 +100,9 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
   }
   edm::Handle<edm::TriggerResults> triggerResults;
   iEvent.getByLabel(triggerResultsLabel_, triggerResults);
-  
+  if (size_t(triggerBit) < triggerResults->size() )
+    if (triggerResults->accept(triggerBit))
+      std::cout << "event pass : " << hltPath_ << std::endl;
   // if (triggerResults->accept(triggerBit)){ //crashing here to be understood!
   //   std::cout << "event pass : " << hltPath_ << std::endl;
   // }

@@ -84,10 +84,10 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   auto_ptr<vector<pat::Muon> > muonColl( new vector<pat::Muon> (*muonHandle) );
 
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
-  // TRIGGER
+  // TRIGGER (this is not really needed ...)
   bool changedConfig = false;
   if (!hltConfig.init(iEvent.getRun(), iSetup, "HLT", changedConfig)) {
-    cout << "Initialization of HLTConfigProvider failed!!" << endl;
+    std::cout << "Initialization of HLTConfigProvider failed!!" << std::endl;
     return;
   }
 
@@ -97,14 +97,17 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     for (size_t j = 0; j < hltConfig.triggerNames().size(); j++) {
       if (TString(hltConfig.triggerNames()[j]).Contains(hltPath_)) triggerBit = j;
     }
-    if (triggerBit == -1) cout << "HLT path not found" << endl;
-    
+    if (triggerBit == -1) std::cout << "HLT path not found" << std::endl;
   }
+
   edm::Handle<edm::TriggerResults> triggerResults;
   iEvent.getByLabel(triggerResultsLabel_, triggerResults);
-  if (triggerResults->accept(triggerBit))
-    std::cout << "event pass : " << hltPath_ << std::endl;
+  if (size_t(triggerBit) < triggerResults->size() )
+    if (triggerResults->accept(triggerBit))
+      std::cout << "event pass : " << hltPath_ << std::endl;
 
+  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
+  // TRIGGER MATCHING
   edm::Handle<trigger::TriggerEvent> triggerSummary;
   iEvent.getByLabel(triggerSummaryLabel_, triggerSummary);
 

@@ -165,12 +165,12 @@ process.analysisPath = cms.Path(
 #process.analysisPath+=process.jetFilter
 
 
-#process.analysisPath+=process.muonUserData
+process.analysisPath+=process.muonUserData
 process.analysisPath+=process.electronUserData
 
 process.analysisPath+=process.genPart
 
-#process.analysisPath+=process.muons
+process.analysisPath+=process.muons
 
 process.analysisPath+=process.electrons
 process.analysisPath+=process.jets
