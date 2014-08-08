@@ -60,6 +60,7 @@ if(options.isData):options.LHE = False
 process = cms.Process("ttDManalysisEDMNtuples")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.MessageLogger.categories.append('HLTrigReport')
 ### Output Report
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 ### Number of maximum events to process
@@ -120,10 +121,13 @@ process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
     pv        = cms.InputTag("goodOfflinePrimaryVertices"),
-    triggerResults = cms.InputTag("TriggerResults"),
-    triggerSummary = cms.InputTag("hltTriggerSummaryAOD"),
-    hltMuonFilter  = cms.InputTag("hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"),
-    hltPath             = cms.string("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL"),
+#    pv        = cms.InputTag("offlinePrimaryVertices"),
+    ### TTRIGGER ###
+    triggerResults     = cms.InputTag("TriggerResults","","HLT"),
+    triggerSummary     = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
+    hltMuonFilter      = cms.InputTag("hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f40QL3crIsoRhoFiltered0p15"),
+    hltPath            = cms.string("HLT_IsoMu40_eta2p1_v11"),
+    hlt2reco_deltaRmax = cms.double(0.1)
 )
 
 process.electronUserData = cms.EDProducer(

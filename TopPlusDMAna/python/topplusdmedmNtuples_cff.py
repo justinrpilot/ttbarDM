@@ -22,6 +22,10 @@ basic =  cms.EDProducer(
     quantity = cms.untracked.string("eta")
     ),
     cms.PSet(
+    tag = cms.untracked.string("Y"),
+    quantity = cms.untracked.string("rapidity")
+    ),
+    cms.PSet(
     tag = cms.untracked.string("Phi"),
     quantity = cms.untracked.string("phi")
     ),
@@ -64,26 +68,26 @@ met =  cms.EDProducer(
 
 ### muon variables 
 muonVars = (
-#   cms.PSet(
-#        tag = cms.untracked.string("dB"),
-#        quantity = cms.untracked.string("userFloat('dB')")
-#   ),
-#   cms.PSet(
-#        tag = cms.untracked.string("dBPV2D"),
-#        quantity = cms.untracked.string("userFloat('dBPV2D')")
-#   ),
-#   cms.PSet(
-#        tag = cms.untracked.string("dBPV3D"),
-#        quantity = cms.untracked.string("userFloat('dBPV3D')")
-#   ),
-#   cms.PSet(
-#        tag = cms.untracked.string("dBBS2D"),
-#        quantity = cms.untracked.string("userFloat('dBBS2D')")
-#   ),
-#   cms.PSet(
-#        tag = cms.untracked.string("dBBS3D"),
-#        quantity = cms.untracked.string("userFloat('dBBS3D')")
-#   ),
+   cms.PSet(
+        tag = cms.untracked.string("dB"),
+        quantity = cms.untracked.string("userFloat('dB')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("dBPV2D"),
+        quantity = cms.untracked.string("userFloat('dBPV2D')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("dBPV3D"),
+        quantity = cms.untracked.string("userFloat('dBPV3D')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("dBBS2D"),
+        quantity = cms.untracked.string("userFloat('dBBS2D')")
+   ),
+   cms.PSet(
+        tag = cms.untracked.string("dBBS3D"),
+        quantity = cms.untracked.string("userFloat('dBBS3D')")
+   ),
    cms.PSet(
         tag = cms.untracked.string("Iso03"),
         quantity = cms.untracked.string("userFloat('iso03')")
@@ -186,37 +190,49 @@ muonVars = (
    ),
 ### genLepton
    cms.PSet(
-    tag = cms.untracked.string("GenMuonPx"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.px : 0")
+    tag = cms.untracked.string("GenMuonY"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.rapidity : 0")
    ),
    cms.PSet(
-    tag = cms.untracked.string("GenMuonPy"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.py : 0")
+    tag = cms.untracked.string("GenMuonEta"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.eta : 0")
    ),
    cms.PSet(
-    tag = cms.untracked.string("GenMuonPz"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.pz : 0")
+    tag = cms.untracked.string("GenMuonPhi"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.phi : 0")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("GenMuonPt"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.pt : 0")
    ),
    cms.PSet(
     tag = cms.untracked.string("GenMuonE"),
     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.energy : 0")
    ),
+   cms.PSet(
+    tag = cms.untracked.string("GenMuonCharge"),
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.charge : 0")
+   ),
 ### trigger matching
    cms.PSet(
-    tag = cms.untracked.string("TrigMuonPt"),
-    quantity = cms.untracked.string("userFloat('TrigMuonPt')")
+    tag = cms.untracked.string("HLTmuonDeltaR"),
+    quantity = cms.untracked.string("userFloat('HLTmuonDeltaR')")
    ),
    cms.PSet(
-    tag = cms.untracked.string("TrigMuonEta"),
-    quantity = cms.untracked.string("userFloat('TrigMuonEta')")
+    tag = cms.untracked.string("HLTmuonPt"),
+    quantity = cms.untracked.string("userFloat('HLTmuonPt')")
    ),
    cms.PSet(
-    tag = cms.untracked.string("TrigMuonPhi"),
-    quantity = cms.untracked.string("userFloat('TrigMuonPhi')")
+    tag = cms.untracked.string("HLTmuonEta"),
+    quantity = cms.untracked.string("userFloat('HLTmuonEta')")
    ),
    cms.PSet(
-    tag = cms.untracked.string("TrigMuonE"),
-    quantity = cms.untracked.string("userFloat('TrigMuonE')")
+    tag = cms.untracked.string("HLTmuonPhi"),
+    quantity = cms.untracked.string("userFloat('HLTmuonPhi')")
+   ),
+   cms.PSet(
+    tag = cms.untracked.string("HLTmuonE"),
+    quantity = cms.untracked.string("userFloat('HLTmuonE')")
    ),
 )
 
