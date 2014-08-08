@@ -106,8 +106,8 @@ process.skimmedPatJets = cms.EDFilter(
     src = cms.InputTag(jetLabel),
 #    src = cms.InputTag("goodPatJetsPFlow"), # 53x
 #    src = cms.InputTag("goodPatJets"), # 71x    
-    cut = cms.string("pt > 25 && abs(eta) < 4.")
-    )
+    cut = cms.string("(( pt > 25 && mass < 20.) || mass > 20. ) && abs(eta) < 4.")
+)
 
 
 ### Asking for at least 2 jets satisfying the selection above 
@@ -137,8 +137,8 @@ process.jetUserData = cms.EDProducer(
     ### TTRIGGER ###
     triggerResults     = cms.InputTag("TriggerResults","","HLT"),
     triggerSummary     = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
-    hltJetFilter       = cms.InputTag(""),
-    hltPath            = cms.string(""),
+    hltJetFilter       = cms.InputTag("hltSixCenJet20L1FastJet"),
+    hltPath            = cms.string("HLT_QuadJet60_DiJet20_v6"),
     hlt2reco_deltaRmax = cms.double(0.2)
 )
 

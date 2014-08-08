@@ -239,13 +239,73 @@ muonVars = (
 ### jet variables
 jetVars = (    
     cms.PSet(
-     tag = cms.untracked.string("CSVbtag"),
+     tag = cms.untracked.string("CSV"),
      quantity = cms.untracked.string("bDiscriminator(\"combinedSecondaryVertexBJetTags\")")
     ),
+    cms.PSet(
+     tag = cms.untracked.string("CSVV1"),
+     quantity = cms.untracked.string("bDiscriminator(\"combinedSecondaryVertexV1BJetTags\")")
+    ),
+### GEN PARTON
+    cms.PSet(
+     tag = cms.untracked.string("GenPartonY"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.rapidity : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenPartonEta"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.eta : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenPartonPhi"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.phi : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenPartonPt"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.pt : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenPartonE"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.energy : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenPartonCharge"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.charge : 0")
+    ),
+###
     cms.PSet(
      tag = cms.untracked.string("PartonFlavour"),
      quantity = cms.untracked.string("partonFlavour")
     ),
+    cms.PSet(
+     tag = cms.untracked.string("HadronFlavour"),
+     quantity = cms.untracked.string("hadronFlavour")
+    ),
+### GEN JET
+    cms.PSet(
+     tag = cms.untracked.string("GenJetY"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.rapidity : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenJetEta"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.eta : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenJetPhi"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.phi : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenJetPt"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.pt : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenJetE"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.energy : 0")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("GenJetCharge"),
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.charge : 0")
+    ),
+### TRIGGER MATHING
     cms.PSet(
      tag = cms.untracked.string("HLTjetEta"),
      quantity = cms.untracked.string("userFloat('HLTjetEta')")
@@ -265,6 +325,63 @@ jetVars = (
     cms.PSet(
      tag = cms.untracked.string("HLTjetDeltaR"),
      quantity = cms.untracked.string("userFloat('HLTjetDeltaR')")
+    ),
+### CONSTITUENTS
+    cms.PSet(
+     tag = cms.untracked.string("muonMultiplicity"),
+     quantity = cms.untracked.string("?isPFJet || isJPTJet ? muonMultiplicity : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("PhotonEnergy"),
+     quantity = cms.untracked.string("? isPFJet ? photonEnergy : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("ElectronEnergy"),
+     quantity = cms.untracked.string("? isPFJet ? electronEnergy : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("MuonEnergy"),
+     quantity = cms.untracked.string("? isPFJet ? muonEnergy : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HFHadronEnergy"),
+     quantity = cms.untracked.string("? isPFJet ? HFHadronEnergy : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HFEMEnergy"),
+     quantity = cms.untracked.string("? isPFJet ? HFEMEnergy : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("ChargedHadronMultiplicity"),
+     quantity = cms.untracked.string("? isPFJet ? chargedHadronMultiplicity : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("neutralHadronMultiplicity"),
+     quantity = cms.untracked.string("? isPFJet ? neutralHadronMultiplicity : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("photonMultiplicity"),
+     quantity = cms.untracked.string("? isPFJet ? photonMultiplicity : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("electronMultiplicity"),
+     quantity = cms.untracked.string("? isPFJet ? electronMultiplicity : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HFHadronMultiplicity"),
+     quantity = cms.untracked.string("? isPFJet ? HFHadronMultiplicity : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HFEMMultiplicity"),
+     quantity = cms.untracked.string("? isPFJet ? HFEMMultiplicity : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("ChargeMuEnergy"),
+     quantity = cms.untracked.string("? isPFJet ? chargedMuEnergy : -1")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("neutralMultiplicity"),
+     quantity = cms.untracked.string("? isPFJet ? neutralMultiplicity : -1")
     ),
 )
 
