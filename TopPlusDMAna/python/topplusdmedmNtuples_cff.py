@@ -283,27 +283,27 @@ jetVars = (
 ### GEN JET
     cms.PSet(
      tag = cms.untracked.string("GenJetY"),
-     quantity = cms.untracked.string("genJetrapidity ")
+     quantity = cms.untracked.string("genJet.rapidity ")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetEta"),
-     quantity = cms.untracked.string("genJeteta ")
+     quantity = cms.untracked.string("genJet.eta ")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetPhi"),
-     quantity = cms.untracked.string("genJetphi ")
+     quantity = cms.untracked.string("genJet.phi ")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetPt"),
-     quantity = cms.untracked.string("genJetpt ")
+     quantity = cms.untracked.string("genJet.pt ")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetE"),
-     quantity = cms.untracked.string("genJetenergy ")
+     quantity = cms.untracked.string("genJet.energy ")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetCharge"),
-     quantity = cms.untracked.string("genJetcharge ")
+     quantity = cms.untracked.string("genJet.charge ")
     ),
 ### TRIGGER MATHING
     cms.PSet(
