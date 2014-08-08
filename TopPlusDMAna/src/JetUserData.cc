@@ -90,7 +90,7 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     std::cout << "the current menu is " << hltConfig.tableName() << std::endl;
     triggerBit = -1;
     for (size_t j = 0; j < hltConfig.triggerNames().size(); j++) {
-      std::cout << "hltConfig.triggerNames()[" << j << "]: " << hltConfig.triggerNames()[j] << std::endl;
+      //      std::cout << "hltConfig.triggerNames()[" << j << "]: " << hltConfig.triggerNames()[j] << std::endl;
       if (TString(hltConfig.triggerNames()[j]).Contains(hltPath_)) triggerBit = j;
     }
     if (triggerBit == -1) std::cout << "HLT path not found" << std::endl;
