@@ -283,27 +283,27 @@ jetVars = (
 ### GEN JET
     cms.PSet(
      tag = cms.untracked.string("GenJetY"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.rapidity : 0")
+     quantity = cms.untracked.string("? genJetRef.isNonnull ? genJetrapidity : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetEta"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.eta : 0")
+     quantity = cms.untracked.string("? genJetRef.isNonnull ? genJeteta : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetPhi"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.phi : 0")
+     quantity = cms.untracked.string("? genJetRef.isNonnull ? genJetphi : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetPt"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.pt : 0")
+     quantity = cms.untracked.string("? genJetRef.isNonnull ? genJetpt : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetE"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.energy : 0")
+     quantity = cms.untracked.string("? genJetRef.isNonnull ? genJetenergy : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetCharge"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genJet.charge : 0")
+     quantity = cms.untracked.string("? genJetRef.isNonnull ? genJetcharge : 0")
     ),
 ### TRIGGER MATHING
     cms.PSet(

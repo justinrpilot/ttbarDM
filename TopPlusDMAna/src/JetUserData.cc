@@ -154,10 +154,10 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     int idx       = -1;
     double deltaR = -1.;
     bool isMatched2trigger = isMatchedWithTrigger(jet, JetLegObjects, idx, deltaR, hlt2reco_deltaRmax_) ;
-    double hltEta = ( isMatched2trigger ? JetLegObjects[0].eta()    : 0.);
-    double hltPhi = ( isMatched2trigger ? JetLegObjects[0].phi()    : 0.);
-    double hltPt  = ( isMatched2trigger ? JetLegObjects[0].pt()     : 0.);
-    double hltE   = ( isMatched2trigger ? JetLegObjects[0].energy() : 0.);
+    double hltEta = ( isMatched2trigger ? JetLegObjects[0].eta()    : -999.);
+    double hltPhi = ( isMatched2trigger ? JetLegObjects[0].phi()    : -999.);
+    double hltPt  = ( isMatched2trigger ? JetLegObjects[0].pt()     : -999.);
+    double hltE   = ( isMatched2trigger ? JetLegObjects[0].energy() : -999.);
     
     
     //	jetColl->push_back( *jet);

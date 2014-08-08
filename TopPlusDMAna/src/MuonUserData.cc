@@ -171,10 +171,10 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     int idx       = -1;
     double deltaR = -1.;
     bool isMatched2trigger = isMatchedWithTrigger(m, MuonLegObjects, idx, deltaR, hlt2reco_deltaRmax_) ;
-    double hltEta = ( isMatched2trigger ? MuonLegObjects[0].eta()    : 0.);
-    double hltPhi = ( isMatched2trigger ? MuonLegObjects[0].phi()    : 0.);
-    double hltPt  = ( isMatched2trigger ? MuonLegObjects[0].pt()     : 0.);
-    double hltE   = ( isMatched2trigger ? MuonLegObjects[0].energy() : 0.);
+    double hltEta = ( isMatched2trigger ? MuonLegObjects[0].eta()    : -999.);
+    double hltPhi = ( isMatched2trigger ? MuonLegObjects[0].phi()    : -999.);
+    double hltPt  = ( isMatched2trigger ? MuonLegObjects[0].pt()     : -999.);
+    double hltE   = ( isMatched2trigger ? MuonLegObjects[0].energy() : -999.);
     
     m.addUserFloat("isSoftMuon",  isSoftMuon);
     m.addUserFloat("isTightMuon", isTightMuon);
