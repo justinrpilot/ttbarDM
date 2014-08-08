@@ -238,6 +238,19 @@ muonVars = (
 
 ### jet variables
 jetVars = (    
+### B-TAGGING
+    cms.PSet(
+     tag = cms.untracked.string("IsCSVL"),
+     quantity = cms.untracked.string("userFloat('IsCSVL')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("IsCSVM"),
+     quantity = cms.untracked.string("userFloat('IsCSVM')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("IsCSVT"),
+     quantity = cms.untracked.string("userFloat('IsCSVT')")
+    ),
     cms.PSet(
      tag = cms.untracked.string("CSV"),
      quantity = cms.untracked.string("bDiscriminator(\"combinedSecondaryVertexBJetTags\")")
@@ -382,6 +395,31 @@ jetVars = (
     cms.PSet(
      tag = cms.untracked.string("neutralMultiplicity"),
      quantity = cms.untracked.string("? isPFJet ? neutralMultiplicity : -1")
+    ),
+#### FOR SYSTEMATICS
+    cms.PSet(
+     tag = cms.untracked.string("SmearedPt"),
+     quantity = cms.untracked.string("userFloat('SmearedPt')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("SmearedPEta"),
+     quantity = cms.untracked.string("userFloat('SmearedPEta')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("SmearedPhi"),
+     quantity = cms.untracked.string("userFloat('SmearedPhi')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("SmearedE"),
+     quantity = cms.untracked.string("userFloat('SmearedE')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("JERup"),
+     quantity = cms.untracked.string("JERup")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("JERdown"),
+     quantity = cms.untracked.string("JERdown")
     ),
 )
 
