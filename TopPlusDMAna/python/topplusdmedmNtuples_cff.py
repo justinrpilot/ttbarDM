@@ -415,11 +415,11 @@ jetVars = (
     ),
     cms.PSet(
      tag = cms.untracked.string("JERup"),
-     quantity = cms.untracked.string("JERup")
+     quantity = cms.untracked.string("userFloat('JERup')")
     ),
     cms.PSet(
      tag = cms.untracked.string("JERdown"),
-     quantity = cms.untracked.string("JERdown")
+     quantity = cms.untracked.string("userFloat('JERdown')")
     ),
 )
 
