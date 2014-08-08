@@ -193,6 +193,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("HLTmuonE",     hltE);
     m.addUserFloat("HLTmuonDeltaR",deltaR);
 
+    /*
     //     **** DEBUG dB ****
     double dB_     = m.dB ();
     double dB_PV2D = m.dB (pat::Muon::PV2D);
@@ -205,7 +206,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("dBPV3D",dB_PV3D);
     m.addUserFloat("dBBS2D",dB_BS2D);
     m.addUserFloat("dBBS3D",dB_BS3D);
-
+    */
   }
 
  iEvent.put( muonColl );

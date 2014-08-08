@@ -68,26 +68,26 @@ met =  cms.EDProducer(
 
 ### muon variables 
 muonVars = (
-   cms.PSet(
-        tag = cms.untracked.string("dB"),
-        quantity = cms.untracked.string("userFloat('dB')")
-   ),
-   cms.PSet(
-        tag = cms.untracked.string("dBPV2D"),
-        quantity = cms.untracked.string("userFloat('dBPV2D')")
-   ),
-   cms.PSet(
-        tag = cms.untracked.string("dBPV3D"),
-        quantity = cms.untracked.string("userFloat('dBPV3D')")
-   ),
-   cms.PSet(
-        tag = cms.untracked.string("dBBS2D"),
-        quantity = cms.untracked.string("userFloat('dBBS2D')")
-   ),
-   cms.PSet(
-        tag = cms.untracked.string("dBBS3D"),
-        quantity = cms.untracked.string("userFloat('dBBS3D')")
-   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dB"),
+#        quantity = cms.untracked.string("userFloat('dB')")
+#   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dBPV2D"),
+#        quantity = cms.untracked.string("userFloat('dBPV2D')")
+#   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dBPV3D"),
+#        quantity = cms.untracked.string("userFloat('dBPV3D')")
+#   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dBBS2D"),
+#        quantity = cms.untracked.string("userFloat('dBBS2D')")
+#   ),
+#   cms.PSet(
+#        tag = cms.untracked.string("dBBS3D"),
+#        quantity = cms.untracked.string("userFloat('dBBS3D')")
+#   ),
    cms.PSet(
         tag = cms.untracked.string("Iso03"),
         quantity = cms.untracked.string("userFloat('iso03')")
