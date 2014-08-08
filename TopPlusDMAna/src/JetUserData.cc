@@ -36,10 +36,10 @@ public:
 
 private:
   void produce( edm::Event &, const edm::EventSetup & );
-  bool isMatchedWithTrigger(const pat::Jet*, trigger::TriggerObjectCollection,int&,double&,double);
+  bool isMatchedWithTrigger(const pat::Jet&, trigger::TriggerObjectCollection,int&,double&,double);
 
-  edm::EDGetTokenT<edm::View<reco::Candidate> > jetToken_;
-  edm::EDGetTokenT<edm::View<reco::Vertex> >    pvToken_;
+  edm::EDGetTokenT<std::vector<pat::Jet> >     jetToken_;
+  edm::EDGetTokenT<std::vector<reco::Vertex> > pvToken_;
 
   InputTag triggerResultsLabel_, triggerSummaryLabel_;
   InputTag hltJetFilterLabel_;
@@ -57,8 +57,8 @@ JetUserData::JetUserData(const edm::ParameterSet& iConfig) :
    hltPath_            (iConfig.getParameter<std::string>("hltPath")),
    hlt2reco_deltaRmax_ (iConfig.getParameter<double>("hlt2reco_deltaRmax"))
  {
-  jetToken_ = consumes<edm::View<reco::Candidate> >(iConfig.getParameter<edm::InputTag>("jetLabel"));
-  pvToken_  = consumes<edm::View<reco::Vertex> >   (iConfig.getParameter<edm::InputTag>("pv"      ));   // "offlinePrimaryVertex"
+   jetToken_ = consumes<std::vector<pat::Jet> >     (iConfig.getParameter<edm::InputTag>("jetLabel"));
+   pvToken_  = consumes<std::vector<reco::Vertex> > (iConfig.getParameter<edm::InputTag>("pv"      ));   // "offlinePrimaryVertex"
 
   produces<vector<pat::Jet> >();
  }
@@ -73,7 +73,7 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   //  const reco::Vertex& PV= pvHandle->front();
 
   //Jets
-  edm::Handle<edm::View<reco::Candidate> > jetHandle;
+  edm::Handle<std::vector<pat::Jet> > jetHandle;
   iEvent.getByToken(jetToken_, jetHandle);
   auto_ptr<vector<pat::Jet> > jetColl(new std::vector<pat::Jet>() );
 
@@ -146,11 +146,8 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 
 
-  for ( edm::View<reco::Candidate>::const_iterator thisJet = jetHandle->begin(), lastJet = jetHandle->end(); 
-	thisJet != lastJet; ++thisJet){
-    
-    const pat::Jet* jet = dynamic_cast< const pat::Jet* >( &(*thisJet) );
-    
+  for (size_t i = 0; i< jetColl->size(); i++){
+    pat::Jet & jet = (*jetColl)[i];
     
     //Individual jet operations to be added here
     // trigger matched 
@@ -164,11 +161,11 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     
     
     //	jetColl->push_back( *jet);
-    jet->addUserFloat("HLTjetEta",   hltEta);
-    jet->addUserFloat("HLTjetPhi",   hltPhi);
-    jet->addUserFloat("HLTjetPt",    hltPt);
-    jet->addUserFloat("HLTjetE",     hltE);
-    jet->addUserFloat("HLTjetDeltaR",deltaR);
+    jet.addUserFloat("HLTjetEta",   hltEta);
+    jet.addUserFloat("HLTjetPhi",   hltPhi);
+    jet.addUserFloat("HLTjetPt",    hltPt);
+    jet.addUserFloat("HLTjetE",     hltE);
+    jet.addUserFloat("HLTjetDeltaR",deltaR);
 
 
   }
@@ -179,10 +176,10 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 // ------------ method called once each job just after ending the event loop  ------------
 bool
-JetUserData::isMatchedWithTrigger(const pat::Jet* p, trigger::TriggerObjectCollection triggerObjects, int& index, double& deltaR, double deltaRmax = 0.2)
+JetUserData::isMatchedWithTrigger(const pat::Jet& p, trigger::TriggerObjectCollection triggerObjects, int& index, double& deltaR, double deltaRmax = 0.2)
 {
   for (size_t i = 0 ; i < triggerObjects.size() ; i++){
-    float dR = sqrt(pow(triggerObjects[i].eta()-p->eta(),2)+ pow(acos(cos(triggerObjects[i].phi()-p->phi())),2)) ;
+    float dR = sqrt(pow(triggerObjects[i].eta()-p.eta(),2)+ pow(acos(cos(triggerObjects[i].phi()-p.phi())),2)) ;
     //    std::cout << "dR: " << dR << std::endl;
     if (dR<deltaRmax) {
       deltaR = dR;
