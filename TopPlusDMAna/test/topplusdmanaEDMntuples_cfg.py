@@ -137,7 +137,7 @@ process.jetUserData = cms.EDProducer(
     ### TTRIGGER ###
     triggerResults     = cms.InputTag("TriggerResults","","HLT"),
     triggerSummary     = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
-    hltMuonFilter      = cms.InputTag(""),
+    hltJetFilter       = cms.InputTag(""),
     hltPath            = cms.string(""),
     hlt2reco_deltaRmax = cms.double(0.2)
 )
