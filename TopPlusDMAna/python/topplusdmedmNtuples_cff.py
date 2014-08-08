@@ -237,17 +237,36 @@ muonVars = (
 )
 
 ### jet variables
-jetVars = (
-    
+jetVars = (    
     cms.PSet(
-    tag = cms.untracked.string("CSVbtag"),
-    quantity = cms.untracked.string("bDiscriminator(\"combinedSecondaryVertexBJetTags\")")
+     tag = cms.untracked.string("CSVbtag"),
+     quantity = cms.untracked.string("bDiscriminator(\"combinedSecondaryVertexBJetTags\")")
     ),
-#    cms.PSet(
-#    tag = cms.untracked.string("PartonFlavour"),
-#    quantity = cms.untracked.string("partonFlavour")
-#    ),
-    )
+    cms.PSet(
+     tag = cms.untracked.string("PartonFlavour"),
+     quantity = cms.untracked.string("partonFlavour")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HLTjetEta"),
+     quantity = cms.untracked.string("userFloat('HLTjetEta')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HLTjetPhi"),
+     quantity = cms.untracked.string("userFloat('HLTjetPhi')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HLTjetPt"),
+     quantity = cms.untracked.string("userFloat('HLTjetPt')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HLTjetE"),
+     quantity = cms.untracked.string("userFloat('HLTjetE')")
+    ),
+    cms.PSet(
+     tag = cms.untracked.string("HLTjetDeltaR"),
+     quantity = cms.untracked.string("userFloat('HLTjetDeltaR')")
+    ),
+)
 
 genPartVars = (
     cms.PSet(

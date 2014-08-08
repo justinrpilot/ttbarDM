@@ -6,7 +6,7 @@
 #include "FWCore/Utilities/interface/EDMException.h"
 
 
-// dR and dPhi                                                                                                                                                              
+// dR and dPhi
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 
@@ -33,7 +33,7 @@
 using namespace reco;
 using namespace edm;
 using namespace std;
-
+using namespace trigger;
 
 class  MuonUserData : public edm::EDProducer {
 public:
@@ -113,10 +113,6 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
   // Results from TriggerEvent product - Attention: must look only for
   // modules actually run in this path for this event!
-   using namespace std;
-   using namespace edm;
-   using namespace reco;
-   using namespace trigger;
   const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
   const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
   const unsigned int moduleIndex(triggerResults->index(triggerIndex));

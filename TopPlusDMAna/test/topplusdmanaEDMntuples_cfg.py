@@ -130,6 +130,18 @@ process.muonUserData = cms.EDProducer(
     hlt2reco_deltaRmax = cms.double(0.1)
 )
 
+process.jetUserData = cms.EDProducer(
+    'JetUserData',
+    jetLabel  = cms.InputTag("skimmedPatJets"),
+    pv        = cms.InputTag("goodOfflinePrimaryVertices"),
+    ### TTRIGGER ###
+    triggerResults     = cms.InputTag("TriggerResults","","HLT"),
+    triggerSummary     = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
+    hltMuonFilter      = cms.InputTag(""),
+    hltPath            = cms.string(""),
+    hlt2reco_deltaRmax = cms.double(0.2)
+)
+
 process.electronUserData = cms.EDProducer(
     'ElectronUserData',
     eleLabel = cms.InputTag("skimmedPatElectrons"),
@@ -170,6 +182,7 @@ process.analysisPath = cms.Path(
 
 
 process.analysisPath+=process.muonUserData
+process.analysisPath+=process.jetUserData
 process.analysisPath+=process.electronUserData
 
 process.analysisPath+=process.genPart
