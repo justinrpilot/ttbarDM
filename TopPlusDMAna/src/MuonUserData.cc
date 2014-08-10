@@ -26,7 +26,9 @@
 #include "DataFormats/HLTReco/interface/TriggerObject.h"
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h" // gives access to the (release cycle dependent) trigger object codes
 
-
+#include <TFile.h>
+#include <TH1F.h>
+#include <TGraphAsymmErrors.h>
 
 #include<vector>
 
@@ -42,6 +44,13 @@ public:
 private:
   void produce( edm::Event &, const edm::EventSetup & );
   bool isMatchedWithTrigger(const pat::Muon, trigger::TriggerObjectCollection,int&,double&,double);
+  void put( edm::Event& evt, double value, const char* instanceName);
+
+  TH1F* convertTGraph2TH1F(TGraphAsymmErrors* g);
+  double getSF_muonID(double, double);
+  double getSF_muonISO(double, double);
+  double getSF_singleMuonHLT(double, double);
+  double getSF_doubleMuonHLT(double, double, double, double);
 
   InputTag muLabel_, pvLabel_;
   InputTag triggerResultsLabel_, triggerSummaryLabel_;
@@ -50,6 +59,14 @@ private:
   double hlt2reco_deltaRmax_;
   HLTConfigProvider hltConfig;
   int triggerBit;
+  
+  double muon_pt_max_;
+  double muon_pt_min_;
+  TH1F* muonID_0_0p9_;
+  TH1F* muonID_0p9_1p2_;
+  TH1F* muonID_1p2_2p1_;
+  TH1F* muonID_2p1_2p4_;
+
  };
 
 
@@ -63,13 +80,31 @@ MuonUserData::MuonUserData(const edm::ParameterSet& iConfig):
    hlt2reco_deltaRmax_ (iConfig.getParameter<double>("hlt2reco_deltaRmax"))
  {
   produces<std::vector<pat::Muon> >();
+
+  TString mainROOTFILEdir = "ttbarDM/TopPlusDMAna/data/";
+  TFile* file_muonSF_ID_  = new TFile(mainROOTFILEdir+"MuonEfficiencies_Run2012ReReco_53X.root",     "READ");
+  //  TFile* file_muonSF_ISO_ = new TFile(mainROOTFILEdir+"MuonEfficiencies_ISO_Run_2012ReReco_53X.root","READ");
+  //  TFile* file_muonSF_singleMuHLT_ = new TFile(mainROOTFILEdir+"SingleMuonTriggerEfficiencies_eta2p1_Run2012ABCD_v5trees.root","READ");
+  //  TFile* file_muonSF_doubleMuHLT_ = new TFile(mainROOTFILEdir+"MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2","READ");
+
+  
+  if(!file_muonSF_ID_->IsZombie()) {
+    //DATA_over_MC_Tight_eta_pt20-500
+    muonID_0_0p9_   = convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID_->Get("DATA_over_MC_Tight_pt_abseta<0.9") );
+    muonID_0p9_1p2_ = convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID_->Get("DATA_over_MC_Tight_pt_abseta0.9-1.2") );
+    muonID_1p2_2p1_ = convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID_->Get("DATA_over_MC_Tight_pt_abseta1.2-2.1") );
+    muonID_2p1_2p4_ = convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID_->Get("DATA_over_MC_Tight_pt_abseta2.1-2.4") );
+  }
+  
  }
 
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
-    
+  
+  //  bool isMC = (!iEvent.isRealData());
+  
   //PV
   edm::Handle<std::vector<reco::Vertex> > pvHandle;
   iEvent.getByLabel(pvLabel_, pvHandle);
@@ -176,19 +211,29 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     double hltPt  = ( isMatched2trigger ? MuonLegObjects[0].pt()     : -999.);
     double hltE   = ( isMatched2trigger ? MuonLegObjects[0].energy() : -999.);
     
+    // SF from Muon POG
+    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffs
+    double muonIDweight  = 1.;
+    double muonISOweight = 1.;
+    double muonHLTweight = 1.;
+
     m.addUserFloat("isSoftMuon",  isSoftMuon);
     m.addUserFloat("isTightMuon", isTightMuon);
     m.addUserFloat("d0",          d0);
     m.addUserFloat("d0err",       d0err);
     m.addUserFloat("dz",          dz);
     m.addUserFloat("iso04",       iso04);
-
+    
     m.addUserFloat("HLTmuonEta",   hltEta);
     m.addUserFloat("HLTmuonPhi",   hltPhi);
     m.addUserFloat("HLTmuonPt",    hltPt);
     m.addUserFloat("HLTmuonE",     hltE);
     m.addUserFloat("HLTmuonDeltaR",deltaR);
-
+    
+    m.addUserFloat("muonIDweight",  muonIDweight );
+    m.addUserFloat("muonISOweight", muonISOweight);
+    m.addUserFloat("muonHLTweight", muonHLTweight);
+    
     /*
     //     **** DEBUG dB ****
     double dB_     = m.dB ();
@@ -196,7 +241,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     double dB_PV3D = m.dB (pat::Muon::PV3D);
     double dB_BS2D = m.dB (pat::Muon::BS2D);
     double dB_BS3D = m.dB (pat::Muon::BS3D);
-
+    
     m.addUserFloat("dB",    dB_);
     m.addUserFloat("dBPV2D",dB_PV2D);
     m.addUserFloat("dBPV3D",dB_PV3D);
@@ -204,9 +249,9 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("dBBS3D",dB_BS3D);
     */
   }
-
- iEvent.put( muonColl );
-
+  
+  iEvent.put( muonColl );
+  
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
@@ -226,6 +271,57 @@ MuonUserData::isMatchedWithTrigger(const pat::Muon p, trigger::TriggerObjectColl
   return false;
 }
 
+void 
+MuonUserData::put(edm::Event& evt, double value, const char* instanceName)
+{
+  std::auto_ptr<double> varPtr(new double(value));
+  evt.put(varPtr, instanceName);
+}
+
+double
+MuonUserData::getSF_muonID(double pt, double eta)
+{  
+  double SF = 1.;
+  return SF;
+}
+
+double
+MuonUserData::getSF_muonISO(double pt, double eta)
+{
+  double SF = 1.;
+  return SF;  
+}
+
+double
+MuonUserData::getSF_singleMuonHLT(double pt, double eta)
+{
+  double SF = 1.;
+  return SF;  
+}
+
+double
+MuonUserData::getSF_doubleMuonHLT(double pt1, double eta1, double pt2, double eta2)
+{
+  double SF = 1.;
+  return SF;  
+}
+
+TH1F*
+MuonUserData::convertTGraph2TH1F(TGraphAsymmErrors* g) {
+  size_t n=g->GetN();
+  float x[n+1];
+  for(size_t i=0; i<n; i++) 
+    x[i]=g->GetX()[i]-g->GetEXlow()[i];
+  x[n]=g->GetX()[n-1]+g->GetEXhigh()[n-1];
+  
+  TH1F* h=new TH1F(g->GetName(), g->GetTitle(), n, x);
+  h->Sumw2();
+  for(size_t i=0; i<n; i++) {
+    h->SetBinContent(i+1, g->GetY()[i]);
+    h->SetBinError(i+1, g->GetEYhigh()[i]);
+  }
+  return h;
+}
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(MuonUserData);
