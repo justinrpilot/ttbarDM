@@ -127,7 +127,8 @@ process.muonUserData = cms.EDProducer(
     triggerSummary     = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
     hltMuonFilter      = cms.InputTag("hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f40QL3crIsoRhoFiltered0p15"),
     hltPath            = cms.string("HLT_IsoMu40_eta2p1_v11"),
-    hlt2reco_deltaRmax = cms.double(0.1)
+    hlt2reco_deltaRmax = cms.double(0.1),
+    mainROOTFILEdir    = cms.string("../data/")
 )
 
 process.jetUserData = cms.EDProducer(

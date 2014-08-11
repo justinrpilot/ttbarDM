@@ -59,6 +59,7 @@ private:
   InputTag hltMuonFilterLabel_;
   std::string hltPath_;
   double hlt2reco_deltaRmax_;
+  TString mainROOTFILEdir_;
   HLTConfigProvider hltConfig;
   int triggerBit;
   
@@ -84,19 +85,19 @@ MuonUserData::MuonUserData(const edm::ParameterSet& iConfig):
    triggerSummaryLabel_(iConfig.getParameter<edm::InputTag>("triggerSummary")),
    hltMuonFilterLabel_ (iConfig.getParameter<edm::InputTag>("hltMuonFilter")),   //trigger objects we want to match
    hltPath_            (iConfig.getParameter<std::string>("hltPath")),
-   hlt2reco_deltaRmax_ (iConfig.getParameter<double>("hlt2reco_deltaRmax"))
+   hlt2reco_deltaRmax_ (iConfig.getParameter<double>("hlt2reco_deltaRmax")),
+   mainROOTFILEdir_    (iConfig.getParameter<std::string>("mainROOTFILEdir"))
  {
   produces<std::vector<pat::Muon> >();
 
-  TString mainROOTFILEdir = "ttbarDM/TopPlusDMAna/data/";
-  TFile* file_muonSF_ID  = new TFile(mainROOTFILEdir+"MuonEfficiencies_Run2012ReReco_53X.root",     "READ");
+  TFile* file_muonSF_ID  = new TFile(mainROOTFILEdir_+"MuonEfficiencies_Run2012ReReco_53X.root",     "READ");
   //DATA_over_MC_Tight_eta_pt20-500
   muonID_0_0p9_   = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta<0.9") ) );
   muonID_0p9_1p2_ = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta0.9-1.2") ) );
   muonID_1p2_2p1_ = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta1.2-2.1") ) );
   muonID_2p1_2p4_ = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta2.1-2.4") ) );
 
-  TFile* file_muonSF_ISO = new TFile(mainROOTFILEdir+"MuonEfficiencies_ISO_Run_2012ReReco_53X.root","READ");
+  TFile* file_muonSF_ISO = new TFile(mainROOTFILEdir_+"MuonEfficiencies_ISO_Run_2012ReReco_53X.root","READ");
   //DATA_over_MC_combRelIsoPF04dBeta<012_Tight_eta_pt20-500
   muonISO_0_0p9_   = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta<0.9") ) );
   muonISO_0p9_1p2_ = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta0.9-1.2") ) );
@@ -104,8 +105,8 @@ MuonUserData::MuonUserData(const edm::ParameterSet& iConfig):
   muonISO_2p1_2p4_ = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta2.1-2.4") ) );
   
 
-  //  TFile* file_muonSF_singleMuHLT = new TFile(mainROOTFILEdir+"SingleMuonTriggerEfficiencies_eta2p1_Run2012ABCD_v5trees.root","READ");
-  //  TFile* file_muonSF_doubleMuHLT = new TFile(mainROOTFILEdir+"MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2","READ");
+  //  TFile* file_muonSF_singleMuHLT = new TFile(mainROOTFILEdir_+"SingleMuonTriggerEfficiencies_eta2p1_Run2012ABCD_v5trees.root","READ");
+  //  TFile* file_muonSF_doubleMuHLT = new TFile(mainROOTFILEdir_+"MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2","READ");
 
   if (muonID_0_0p9_!=NULL) {
     muon_pt_min_ = muonID_0_0p9_->GetXaxis()->GetXmin();
