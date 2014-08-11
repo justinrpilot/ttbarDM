@@ -48,7 +48,9 @@ private:
 
   TH1F* convertTGraph2TH1F(TGraphAsymmErrors* g);
   double getSF_muonID(double, double);
+  double getSFerror_muonID(double, double);
   double getSF_muonISO(double, double);
+  double getSFerror_muonISO(double, double);
   double getSF_singleMuonHLT(double, double);
   double getSF_doubleMuonHLT(double, double, double, double);
 
@@ -67,6 +69,11 @@ private:
   TH1F* muonID_1p2_2p1_;
   TH1F* muonID_2p1_2p4_;
 
+  TH1F* muonISO_0_0p9_;
+  TH1F* muonISO_0p9_1p2_;
+  TH1F* muonISO_1p2_2p1_;
+  TH1F* muonISO_2p1_2p4_;
+
  };
 
 
@@ -82,20 +89,28 @@ MuonUserData::MuonUserData(const edm::ParameterSet& iConfig):
   produces<std::vector<pat::Muon> >();
 
   TString mainROOTFILEdir = "ttbarDM/TopPlusDMAna/data/";
-  TFile* file_muonSF_ID_  = new TFile(mainROOTFILEdir+"MuonEfficiencies_Run2012ReReco_53X.root",     "READ");
-  //  TFile* file_muonSF_ISO_ = new TFile(mainROOTFILEdir+"MuonEfficiencies_ISO_Run_2012ReReco_53X.root","READ");
-  //  TFile* file_muonSF_singleMuHLT_ = new TFile(mainROOTFILEdir+"SingleMuonTriggerEfficiencies_eta2p1_Run2012ABCD_v5trees.root","READ");
-  //  TFile* file_muonSF_doubleMuHLT_ = new TFile(mainROOTFILEdir+"MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2","READ");
+  TFile* file_muonSF_ID  = new TFile(mainROOTFILEdir+"MuonEfficiencies_Run2012ReReco_53X.root",     "READ");
+  //DATA_over_MC_Tight_eta_pt20-500
+  muonID_0_0p9_   = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta<0.9") ) );
+  muonID_0p9_1p2_ = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta0.9-1.2") ) );
+  muonID_1p2_2p1_ = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta1.2-2.1") ) );
+  muonID_2p1_2p4_ = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta2.1-2.4") ) );
 
+  TFile* file_muonSF_ISO = new TFile(mainROOTFILEdir+"MuonEfficiencies_ISO_Run_2012ReReco_53X.root","READ");
+  //DATA_over_MC_combRelIsoPF04dBeta<012_Tight_eta_pt20-500
+  muonISO_0_0p9_   = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta<0.9") ) );
+  muonISO_0p9_1p2_ = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta0.9-1.2") ) );
+  muonISO_1p2_2p1_ = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta1.2-2.1") ) );
+  muonISO_2p1_2p4_ = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta2.1-2.4") ) );
   
-  if(!file_muonSF_ID_->IsZombie()) {
-    //DATA_over_MC_Tight_eta_pt20-500
-    muonID_0_0p9_   = convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID_->Get("DATA_over_MC_Tight_pt_abseta<0.9") );
-    muonID_0p9_1p2_ = convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID_->Get("DATA_over_MC_Tight_pt_abseta0.9-1.2") );
-    muonID_1p2_2p1_ = convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID_->Get("DATA_over_MC_Tight_pt_abseta1.2-2.1") );
-    muonID_2p1_2p4_ = convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID_->Get("DATA_over_MC_Tight_pt_abseta2.1-2.4") );
+
+  //  TFile* file_muonSF_singleMuHLT = new TFile(mainROOTFILEdir+"SingleMuonTriggerEfficiencies_eta2p1_Run2012ABCD_v5trees.root","READ");
+  //  TFile* file_muonSF_doubleMuHLT = new TFile(mainROOTFILEdir+"MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2","READ");
+
+  if (muonID_0_0p9_!=NULL) {
+    muon_pt_min_ = muonID_0_0p9_->GetXaxis()->GetXmin();
+    muon_pt_max_ = muonID_0_0p9_->GetXaxis()->GetXmax();
   }
-  
  }
 
 #include "DataFormats/MuonReco/interface/Muon.h"
@@ -213,9 +228,10 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     
     // SF from Muon POG
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffs
-    double muonIDweight  = 1.;
-    double muonISOweight = 1.;
-    double muonHLTweight = 1.;
+    double eta = m.eta();
+    double muonIDweight  = getSF_muonID (pt,eta);
+    double muonISOweight = getSF_muonISO(pt,eta);
+    double muonHLTweight = getSF_singleMuonHLT(pt,eta);
 
     m.addUserFloat("isSoftMuon",  isSoftMuon);
     m.addUserFloat("isTightMuon", isTightMuon);
@@ -282,6 +298,30 @@ double
 MuonUserData::getSF_muonID(double pt, double eta)
 {  
   double SF = 1.;
+  if(pt < muon_pt_min_) pt = muon_pt_min_;
+  if(pt > muon_pt_max_) pt = muon_pt_max_;
+  eta=fabs(eta);
+
+  if(eta<=0.9) SF = muonID_0_0p9_->GetBinContent(muonID_0_0p9_->FindBin(pt));
+  if(eta>0.9 && eta<=1.2) SF = muonID_0p9_1p2_->GetBinContent(muonID_0p9_1p2_->FindBin(pt));
+  if(eta>1.2 && eta<=2.1) SF = muonID_1p2_2p1_->GetBinContent(muonID_1p2_2p1_->FindBin(pt));
+  if(eta>2.1 && eta<=2.4) SF = muonID_2p1_2p4_->GetBinContent(muonID_2p1_2p4_->FindBin(pt));
+
+  return SF;
+}
+double
+MuonUserData::getSFerror_muonID(double pt, double eta)
+{  
+  double SF = 1.;
+  if(pt < muon_pt_min_) pt = muon_pt_min_;
+  if(pt > muon_pt_max_) pt = muon_pt_max_;
+  eta=fabs(eta);
+
+  if(eta<=0.9) SF = muonID_0_0p9_->GetBinError(muonID_0_0p9_->FindBin(pt));
+  if(eta>0.9 && eta<=1.2) SF = muonID_0p9_1p2_->GetBinError(muonID_0p9_1p2_->FindBin(pt));
+  if(eta>1.2 && eta<=2.1) SF = muonID_1p2_2p1_->GetBinError(muonID_1p2_2p1_->FindBin(pt));
+  if(eta>2.1 && eta<=2.4) SF = muonID_2p1_2p4_->GetBinError(muonID_2p1_2p4_->FindBin(pt));
+
   return SF;
 }
 
@@ -289,6 +329,28 @@ double
 MuonUserData::getSF_muonISO(double pt, double eta)
 {
   double SF = 1.;
+  if(pt < muon_pt_min_) pt = muon_pt_min_;
+  if(pt > muon_pt_max_) pt = muon_pt_max_;
+  eta=fabs(eta);
+
+  if(eta<=0.9) SF = muonISO_0_0p9_->GetBinContent(muonISO_0_0p9_->FindBin(pt));
+  if(eta>0.9 && eta<=1.2) SF = muonISO_0p9_1p2_->GetBinContent(muonISO_0p9_1p2_->FindBin(pt));
+  if(eta>1.2 && eta<=2.1) SF = muonISO_1p2_2p1_->GetBinContent(muonISO_1p2_2p1_->FindBin(pt));
+  if(eta>2.1 && eta<=2.4) SF = muonISO_2p1_2p4_->GetBinContent(muonISO_2p1_2p4_->FindBin(pt));
+  return SF;  
+}
+double
+MuonUserData::getSFerror_muonISO(double pt, double eta)
+{
+  double SF = 1.;
+  if(pt < muon_pt_min_) pt = muon_pt_min_;
+  if(pt > muon_pt_max_) pt = muon_pt_max_;
+  eta=fabs(eta);
+
+  if(eta<=0.9) SF = muonISO_0_0p9_->GetBinError(muonISO_0_0p9_->FindBin(pt));
+  if(eta>0.9 && eta<=1.2) SF = muonISO_0p9_1p2_->GetBinError(muonISO_0p9_1p2_->FindBin(pt));
+  if(eta>1.2 && eta<=2.1) SF = muonISO_1p2_2p1_->GetBinError(muonISO_1p2_2p1_->FindBin(pt));
+  if(eta>2.1 && eta<=2.4) SF = muonISO_2p1_2p4_->GetBinError(muonISO_2p1_2p4_->FindBin(pt));
   return SF;  
 }
 
