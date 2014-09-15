@@ -118,7 +118,7 @@ MuonUserData::MuonUserData(const edm::ParameterSet& iConfig):
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
-  
+
   //  bool isMC = (!iEvent.isRealData());
   
   //PV
@@ -134,6 +134,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
   // TRIGGER (this is not really needed ...)
   bool changedConfig = false;
+  bool pathFound = false;
   if (!hltConfig.init(iEvent.getRun(), iSetup, "HLT", changedConfig)) {
     std::cout << "Initialization of HLTConfigProvider failed!!" << std::endl;
     return;
@@ -144,19 +145,22 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     triggerBit = -1;
     for (size_t j = 0; j < hltConfig.triggerNames().size(); j++) {
       //      std::cout << "hltConfig.triggerNames()[" << j << "]: " << hltConfig.triggerNames()[j] << std::endl;
-      if (TString(hltConfig.triggerNames()[j]).Contains(hltPath_)) triggerBit = j;
+      if (TString(hltConfig.triggerNames()[j]).Contains(hltPath_)) {triggerBit = j;pathFound=true;}
     }
     if (triggerBit == -1) std::cout << "HLT path not found" << std::endl;
   }
 
   edm::Handle<edm::TriggerResults> triggerResults;
   iEvent.getByLabel(triggerResultsLabel_, triggerResults);
-  if (size_t(triggerBit) < triggerResults->size() )
+  if (size_t(triggerBit) < triggerResults->size() && pathFound  )
     if (triggerResults->accept(triggerBit))
       std::cout << "event pass : " << hltPath_ << std::endl;
 
+    
+
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
   // TRIGGER MATCHING
+
   trigger::TriggerObjectCollection MuonLegObjects;
 
   edm::Handle<trigger::TriggerEvent> triggerSummary;
@@ -164,10 +168,14 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
   // Results from TriggerEvent product - Attention: must look only for
   // modules actually run in this path for this event!
+  if(pathFound){
   const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
   const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
   const unsigned int moduleIndex(triggerResults->index(triggerIndex));
+  
   for (unsigned int j=0; j<=moduleIndex; ++j) {
+
+
     const string& moduleLabel(moduleLabels[j]);
     const string  moduleType(hltConfig.moduleType(moduleLabel));
     // check whether the module is packed up in TriggerEvent product
@@ -193,6 +201,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  //	       << endl;
 	}
       }
+      }
     }
   }
   //  std::cout << "----> MuonLegObjects: " << MuonLegObjects.size() << " <--> RECO : " << muonColl->size() << std::endl;
@@ -200,9 +209,10 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   for (size_t i = 0; i< muonColl->size(); i++){
     pat::Muon & m = (*muonColl)[i];
 
+
     // muon ID
-    bool isTightMuon = m.isTightMuon(PV);
-    bool isSoftMuon  = m.isSoftMuon(PV) ;
+    bool isTightMuon = true;//m.isTightMuon(PV);
+    bool isSoftMuon  = true;//Mm.isSoftMuon(PV) ;
     
     // impact parameters
     double d0    = m.dB ();
@@ -218,6 +228,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     double pt                 = m.pt();
     double iso04 = sumChargedHadronPt+TMath::Max(0.,sumNeutralHadronPt+sumPhotonPt-0.5*sumPUPt)/pt;
 
+
     // trigger matched 
     int idx       = -1;
     double deltaR = -1.;
@@ -227,12 +238,14 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     double hltPt  = ( isMatched2trigger ? MuonLegObjects[0].pt()     : -999.);
     double hltE   = ( isMatched2trigger ? MuonLegObjects[0].energy() : -999.);
     
+
     // SF from Muon POG
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffs
     double eta = m.eta();
     double muonIDweight  = getSF_muonID (pt,eta);
     double muonISOweight = getSF_muonISO(pt,eta);
     double muonHLTweight = getSF_singleMuonHLT(pt,eta);
+
 
     m.addUserFloat("isSoftMuon",  isSoftMuon);
     m.addUserFloat("isTightMuon", isTightMuon);
@@ -265,6 +278,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("dBBS2D",dB_BS2D);
     m.addUserFloat("dBBS3D",dB_BS3D);
     */
+
   }
   
   iEvent.put( muonColl );

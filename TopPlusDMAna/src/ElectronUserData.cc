@@ -149,12 +149,17 @@ void ElectronUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetu
     float d0 = (-1) * el.gsfTrack()->dxy(vtxPoint);
     float dz = el.gsfTrack()->dz(vtxPoint);
 
+
     if(debug_>=1) cout<<" ele " << i <<" pt "<< el.pt()<<" eta "<<el.eta()<<"fabs(1/E-1/P) "<< ooEmooP_ <<" d0 "<< d0 <<" dz " << dz <<" iso " << relIsoWithDBeta_<<endl; 		    
     
+    float nMissingTrackerHits_ = el.gsfTrack()->hitPattern().numberOfLostTrackerHits(HitPattern::MISSING_INNER_HITS);
+;
+      
     el.addUserFloat("d0",          d0);
     el.addUserFloat("dz",          dz);
     el.addUserFloat("iso03",       relIsoWithDBeta_);
     el.addUserFloat("ooEmooP",     ooEmooP_);
+    el.addUserFloat("missingInnerTrackerHits",     nMissingTrackerHits_);
         
 
   }

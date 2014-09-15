@@ -296,27 +296,27 @@ jetVars = (
 ### GEN JET
     cms.PSet(
      tag = cms.untracked.string("GenJetY"),
-     quantity = cms.untracked.string("genJet.rapidity ")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.rapidity : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetEta"),
-     quantity = cms.untracked.string("genJet.eta ")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.eta : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetPhi"),
-     quantity = cms.untracked.string("genJet.phi ")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.phi : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetPt"),
-     quantity = cms.untracked.string("genJet.pt ")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.pt : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetE"),
-     quantity = cms.untracked.string("genJet.energy ")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.energy : 0")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetCharge"),
-     quantity = cms.untracked.string("genJet.charge ")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.charge : 0")
     ),
 ### TRIGGER MATHING
     cms.PSet(
@@ -485,7 +485,7 @@ electronVars = (
         ),
    cms.PSet(
         tag = cms.untracked.string("expectedMissInHits"),
-        quantity = cms.untracked.string("gsfTrack().trackerExpectedHitsInner().numberOfLostHits()")
+        quantity = cms.untracked.string("userFloat('missingInnerTrackerHits')")
         ),
    cms.PSet(
         tag = cms.untracked.string("pssConVeto"),
@@ -506,6 +506,7 @@ jets = copy.deepcopy(basic)
 jets.variables += jetVars
 jets.prefix = cms.untracked.string("jet")
 jets.src = cms.InputTag("skimmedPatJets")
+#jets.src = cms.InputTag("selectedPatJets")
 
 ###genPart
 genPart = copy.deepcopy(basic)

@@ -22,8 +22,10 @@ options.register('maxEvts',
                  'Number of events to process')
 
 options.register('sample',
-                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+#                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
+#                 "file:/tmp/oiorio/patTuple_tlbsm_train_tlbsm_71x_v1.root",
+                 'file:/afs/cern.ch/work/o/oiorio/public/xDM/patTuple_tlbsm_train_tlbsm_71x_v1.root',
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
                  'Sample to analyze')

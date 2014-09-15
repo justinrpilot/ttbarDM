@@ -85,6 +85,7 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
   // TRIGGER (this is not really needed ...)
   bool changedConfig = false;
+  bool pathFound = false;
   if (!hltConfig.init(iEvent.getRun(), iSetup, "HLT", changedConfig)) {
     std::cout << "Initialization of HLTConfigProvider failed!!" << std::endl;
     return;
@@ -95,14 +96,14 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     triggerBit = -1;
     for (size_t j = 0; j < hltConfig.triggerNames().size(); j++) {
       //      std::cout << "hltConfig.triggerNames()[" << j << "]: " << hltConfig.triggerNames()[j] << std::endl;
-      if (TString(hltConfig.triggerNames()[j]).Contains(hltPath_)) triggerBit = j;
+      if (TString(hltConfig.triggerNames()[j]).Contains(hltPath_)) {triggerBit = j;pathFound=true;}
     }
     if (triggerBit == -1) std::cout << "HLT path not found" << std::endl;
   }
 
   edm::Handle<edm::TriggerResults> triggerResults;
   iEvent.getByLabel(triggerResultsLabel_, triggerResults);
-  if (size_t(triggerBit) < triggerResults->size() )
+  if (size_t(triggerBit) < triggerResults->size() && pathFound)
     if (triggerResults->accept(triggerBit))
       std::cout << "event pass : " << hltPath_ << std::endl;
 
@@ -115,33 +116,35 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
   // Results from TriggerEvent product - Attention: must look only for
   // modules actually run in this path for this event!
-  const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
-  const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
-  const unsigned int moduleIndex(triggerResults->index(triggerIndex));
-  for (unsigned int j=0; j<=moduleIndex; ++j) {
-    const string& moduleLabel(moduleLabels[j]);
-    const string  moduleType(hltConfig.moduleType(moduleLabel));
-    // check whether the module is packed up in TriggerEvent product
-    const unsigned int filterIndex(triggerSummary->filterIndex(InputTag(moduleLabel,"","HLT")));
-    if (filterIndex<triggerSummary->sizeFilters()) {
-      //      cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
-      TString lable = moduleLabel.c_str();
-      if (lable.Contains(hltJetFilterLabel_.label())) {
-
-	const trigger::Vids& VIDS (triggerSummary->filterIds(filterIndex));
-	const trigger::Keys& KEYS(triggerSummary->filterKeys(filterIndex));
-	const size_type nI(VIDS.size());
-	const size_type nK(KEYS.size());
-	assert(nI==nK);
-	const size_type n(max(nI,nK));
-	//	cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
-	const trigger::TriggerObjectCollection& TOC(triggerSummary->getObjects());
-	for (size_type i=0; i!=n; ++i) {
-	  const trigger::TriggerObject& TO(TOC[KEYS[i]]);
-	  JetLegObjects.push_back(TO);	  
-	  //	  cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
-	  //	       << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
-	  //	       << endl;
+  if(pathFound){
+    const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
+    const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
+    const unsigned int moduleIndex(triggerResults->index(triggerIndex));
+    for (unsigned int j=0; j<=moduleIndex; ++j) {
+      const string& moduleLabel(moduleLabels[j]);
+      const string  moduleType(hltConfig.moduleType(moduleLabel));
+      // check whether the module is packed up in TriggerEvent product
+      const unsigned int filterIndex(triggerSummary->filterIndex(InputTag(moduleLabel,"","HLT")));
+      if (filterIndex<triggerSummary->sizeFilters()) {
+	//      cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
+	TString lable = moduleLabel.c_str();
+	if (lable.Contains(hltJetFilterLabel_.label())) {
+	  
+	  const trigger::Vids& VIDS (triggerSummary->filterIds(filterIndex));
+	  const trigger::Keys& KEYS(triggerSummary->filterKeys(filterIndex));
+	  const size_type nI(VIDS.size());
+	  const size_type nK(KEYS.size());
+	  assert(nI==nK);
+	  const size_type n(max(nI,nK));
+	  //	cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
+	  const trigger::TriggerObjectCollection& TOC(triggerSummary->getObjects());
+	  for (size_type i=0; i!=n; ++i) {
+	    const trigger::TriggerObject& TO(TOC[KEYS[i]]);
+	    JetLegObjects.push_back(TO);	  
+	    //	  cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
+	    //	       << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
+	    //	       << endl;
+	  }
 	}
       }
     }
