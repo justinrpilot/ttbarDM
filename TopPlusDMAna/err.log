@@ -1,0 +1,25 @@
+Reading cached build data
+>> Local Products Rules ..... started
+>> Local Products Rules ..... done
+****WARNING: Invalid tool Utilities/Timing. Please fix src/ttbarDM/TopPlusDMAna/BuildFile.xml file.
+>> Entering Package ttbarDM/TopPlusDMAna
+>> Creating project symlinks
+>> Compiling edm plugin /afs/cern.ch/work/o/oiorio/testDM/CMSSW_7_2_0_pre5/src/ttbarDM/TopPlusDMAna/src/DMBaseTreeMaker.cc 
+>> Building edm plugin tmp/slc6_amd64_gcc481/src/ttbarDM/TopPlusDMAna/src/ttbarDMTopPlusDMAna/libttbarDMTopPlusDMAna.so
+Leaving library rule at ttbarDM/TopPlusDMAna
+@@@@ Running edmWriteConfigs for ttbarDMTopPlusDMAna
+--- Registered EDM Plugin: ttbarDMTopPlusDMAna
+>> Leaving Package ttbarDM/TopPlusDMAna
+>> Package ttbarDM/TopPlusDMAna built
+>> Local Products Rules ..... started
+>> Local Products Rules ..... done
+****WARNING: Invalid tool Utilities/Timing. Please fix src/ttbarDM/TopPlusDMAna/BuildFile.xml file.
+gmake[1]: Entering directory `/afs/cern.ch/work/o/oiorio/testDM/CMSSW_7_2_0_pre5'
+>> Creating project symlinks
+@@@@ Refreshing Plugins:edmPluginRefresh
+>> Done python_symlink
+>> Compiling python modules python
+>> Compiling python modules src/ttbarDM/TopPlusDMAna/python
+>> All python modules compiled
+>> Pluging of all type refreshed.
+gmake[1]: Leaving directory `/afs/cern.ch/work/o/oiorio/testDM/CMSSW_7_2_0_pre5'

@@ -23,8 +23,9 @@ options.register('maxEvts',
 
 options.register('sample',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+#                 'file:/afs/cern.ch/work/o/oiorio/public/xDM/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+                 'file:/tmp/oiorio/patTuple_tlbsm_train_tlbsm_71x_v1.root',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
-                 'file:/afs/cern.ch/work/o/oiorio/public/xDM/patTuple_tlbsm_train_tlbsm_71x_v1.root',
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
                  'Sample to analyze')
@@ -118,6 +119,7 @@ process.jetFilter = cms.EDFilter("CandViewCountFilter",
     filter = cms.bool(True)
 )
 
+
 process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
@@ -155,30 +157,40 @@ process.electronUserData = cms.EDProducer(
 )
 
 
+if options.version == "71":
+    from PhysicsTools.CandAlgos.EventShapeVars_cff import *
+    process.eventShapePFVars = pfEventShapeVars.clone()
+    process.eventShapePFVars.src = cms.InputTag("particleFlow")
+    
+    process.eventShapePFJetVars = pfEventShapeVars.clone()
+    process.eventShapePFJetVars.src = cms.InputTag("skimmedPatJets")
 
-from PhysicsTools.CandAlgos.EventShapeVars_cff import *
-process.eventShapePFVars = pfEventShapeVars.clone()
-process.eventShapePFVars.src = cms.InputTag("particleFlow")
-
-process.eventShapePFJetVars = pfEventShapeVars.clone()
-process.eventShapePFJetVars.src = cms.InputTag("skimmedPatJets")
-
-process.centrality = cms.EDProducer("CentralityUserData",
-   src = cms.InputTag("skimmedPatJets")
-)                                    
+    process.centrality = cms.EDProducer("CentralityUserData",
+                                        src = cms.InputTag("skimmedPatJets")
+                                        )                                    
 
 ### Including ntuplizer 
 process.load("ttbarDM.TopPlusDMAna.topplusdmedmNtuples_cff")
+
+
+#add rootplizer
+
+process.TFileService = cms.Service("TFileService", fileName = cms.string("TTBar.root"))
+
+process.load("ttbarDM.TopPlusDMAna.topplusdmedmRootTreeMaker_cff")
+
 
 ### definition of Analysis sequence
 process.analysisPath = cms.Path(
     process.skimmedPatElectrons +
     process.skimmedPatMuons +
-    process.skimmedPatJets +
-    process.eventShapePFVars +
-    process.eventShapePFJetVars +
-    process.centrality
+    process.skimmedPatJets 
+
 )
+if options.version == "71":
+    process.analysisPath+=process.eventShapePFVars
+    process.analysisPath+=process.eventShapePFJetVars 
+    process.analysisPath+=process.centrality 
 
 #process.analysisPath+=process.jetFilter
 
@@ -194,6 +206,8 @@ process.analysisPath+=process.muons
 process.analysisPath+=process.electrons
 process.analysisPath+=process.jets
 process.analysisPath+=process.met
+
+process.analysisPath+=process.DMTreesDumper
 
 ### Creating the filter path to use in order to select events
 process.filterPath = cms.Path(
@@ -212,6 +226,7 @@ if(options.LHE):
 ### end LHE products     
 
 
+
 process.edmNtuplesOut.SelectEvents = cms.untracked.PSet(
     SelectEvents = cms.vstring('filterPath')
     )
@@ -219,7 +234,7 @@ process.edmNtuplesOut.SelectEvents = cms.untracked.PSet(
 process.fullPath = cms.Schedule(
     process.analysisPath,
     process.filterPath
-    )
+     )
 
 process.endPath = cms.EndPath(process.edmNtuplesOut)
 
