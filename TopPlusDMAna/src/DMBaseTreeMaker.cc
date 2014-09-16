@@ -1,3 +1,14 @@
+/*
+*\Author:  O.Iorio
+*
+*
+*
+*\version  $Id: DMBaseTreeMaker 
+*/
+// This analyzer dumps the edmNtuples to bare root trees
+//
+//
+//
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Utilities/interface/InputTag.h"
