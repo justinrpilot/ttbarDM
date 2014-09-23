@@ -7,7 +7,7 @@ basic =  cms.EDProducer(
     src=cms.InputTag("skimmedPatMuons"),
     lazyParser=cms.untracked.bool(True),
     prefix=cms.untracked.string("basic"),
-    eventInfo=cms.untracked.bool(True),
+    eventInfo=cms.untracked.bool(False),
     variables = cms.VPSet(
     cms.PSet(
     tag = cms.untracked.string("Mass"),
@@ -45,7 +45,7 @@ met =  cms.EDProducer(
     src=cms.InputTag("patMETPF"),
     lazyParser=cms.untracked.bool(True),
     prefix=cms.untracked.string("met"),
-    eventInfo=cms.untracked.bool(True),
+    eventInfo=cms.untracked.bool(False),
     variables = cms.VPSet(
     cms.PSet(
     tag = cms.untracked.string("Pt"),
@@ -483,10 +483,10 @@ electronVars = (
         tag = cms.untracked.string("ooEmooP"),
         quantity = cms.untracked.string("userFloat('ooEmooP')")
         ),
-   cms.PSet(
-        tag = cms.untracked.string("expectedMissInHits"),
-        quantity = cms.untracked.string("userFloat('missingInnerTrackerHits')")
-        ),
+#   cms.PSet(
+#        tag = cms.untracked.string("expectedMissInHits"),
+#        quantity = cms.untracked.string("userFloat('missingInnerTrackerHits')")
+#        ),
    cms.PSet(
         tag = cms.untracked.string("pssConVeto"),
         quantity = cms.untracked.string("passConversionVeto")
@@ -539,6 +539,18 @@ eventShapeVar = (
    ),
 )
 
+
+### event info: EvtNumber, RunNumber, LumiBlock
+eventInfo =  cms.EDProducer(
+    "CandViewNtpProducer",
+    src=cms.InputTag("patMETPF"),
+    lazyParser=cms.untracked.bool(True),
+    prefix=cms.untracked.string("evtInfo"),
+    eventInfo=cms.untracked.bool(True),
+    variables = cms.VPSet()
+    )
+
+
 edmNtuplesOut = cms.OutputModule(
     "PoolOutputModule",
     fileName = cms.untracked.string('TTbarDMEdmNtuples.root'),
@@ -550,7 +562,8 @@ edmNtuplesOut = cms.OutputModule(
     "keep *_jets_*_*",
     "keep *_eventShape*_*_*",
     "keep *_*_*centrality*_*",
-    "keep *_met_*_*"
+    "keep *_met_*_*",
+    "keep *_eventInfo_*_*"
     ),
     dropMetaData = cms.untracked.string('ALL'),
     )
