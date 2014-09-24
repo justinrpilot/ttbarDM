@@ -21,13 +21,14 @@ import FWCore.ParameterSet.VarParsing as opts
 options = opts.VarParsing ('analysis')
 
 options.register('maxEvts',
-                 -1,# default value: process all events
+                 10,# default value: process all events
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.int,
                  'Number of events to process')
 
 options.register('sample',
-                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+#                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+                 'file:/afs/cern.ch/user/d/decosa/wdecosa/public/DMtt/miniAOD_TTDMDMJets_M200GeV_Pu20bx25_10C35665-4E2D-E411-A45E-0025901D4864.root',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
@@ -53,7 +54,7 @@ options.register('isData',
                  'Is data?')
 
 options.register('miniAOD',
-                 False,
+                 True,
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.bool,
                  'miniAOD source')
