@@ -42,7 +42,7 @@ basic =  cms.EDProducer(
 
 met =  cms.EDProducer(
     "CandViewNtpProducer",
-    src=cms.InputTag("patMETPF"),
+    src=cms.InputTag("skimmedPatMET"),
     lazyParser=cms.untracked.bool(True),
     prefix=cms.untracked.string("met"),
     eventInfo=cms.untracked.bool(False),
@@ -543,7 +543,7 @@ eventShapeVar = (
 ### event info: EvtNumber, RunNumber, LumiBlock
 eventInfo =  cms.EDProducer(
     "CandViewNtpProducer",
-    src=cms.InputTag("patMETPF"),
+    src=cms.InputTag("skimmedPatMET"),
     lazyParser=cms.untracked.bool(True),
     prefix=cms.untracked.string("evtInfo"),
     eventInfo=cms.untracked.bool(True),

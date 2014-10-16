@@ -164,43 +164,46 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   trigger::TriggerObjectCollection MuonLegObjects;
 
   edm::Handle<trigger::TriggerEvent> triggerSummary;
-  iEvent.getByLabel(triggerSummaryLabel_, triggerSummary);
-
-  // Results from TriggerEvent product - Attention: must look only for
-  // modules actually run in this path for this event!
-  if(pathFound){
-  const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
-  const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
-  const unsigned int moduleIndex(triggerResults->index(triggerIndex));
+ 
+  if ( triggerSummary.isValid() ) {
+    iEvent.getByLabel(triggerSummaryLabel_, triggerSummary);
+    
+    // Results from TriggerEvent product - Attention: must look only for
+    // modules actually run in this path for this event!
+    if(pathFound){
+      const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
+      const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
+      const unsigned int moduleIndex(triggerResults->index(triggerIndex));
   
-  for (unsigned int j=0; j<=moduleIndex; ++j) {
-
-
-    const string& moduleLabel(moduleLabels[j]);
-    const string  moduleType(hltConfig.moduleType(moduleLabel));
-    // check whether the module is packed up in TriggerEvent product
-    const unsigned int filterIndex(triggerSummary->filterIndex(InputTag(moduleLabel,"","HLT")));
-    if (filterIndex<triggerSummary->sizeFilters()) {
-      //      cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
-      TString lable = moduleLabel.c_str();
-      if (lable.Contains(hltMuonFilterLabel_.label())) {
-
-	const trigger::Vids& VIDS (triggerSummary->filterIds(filterIndex));
-	const trigger::Keys& KEYS(triggerSummary->filterKeys(filterIndex));
-	const size_type nI(VIDS.size());
-	const size_type nK(KEYS.size());
-	assert(nI==nK);
-	const size_type n(max(nI,nK));
-	//	cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
-	const trigger::TriggerObjectCollection& TOC(triggerSummary->getObjects());
-	for (size_type i=0; i!=n; ++i) {
-	  const trigger::TriggerObject& TO(TOC[KEYS[i]]);
-	  MuonLegObjects.push_back(TO);	  
-	  //	  cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
-	  //	       << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
-	  //	       << endl;
+      for (unsigned int j=0; j<=moduleIndex; ++j) {
+	
+	
+	const string& moduleLabel(moduleLabels[j]);
+	const string  moduleType(hltConfig.moduleType(moduleLabel));
+	// check whether the module is packed up in TriggerEvent product
+	const unsigned int filterIndex(triggerSummary->filterIndex(InputTag(moduleLabel,"","HLT")));
+	if (filterIndex<triggerSummary->sizeFilters()) {
+	  //      cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
+	  TString lable = moduleLabel.c_str();
+	  if (lable.Contains(hltMuonFilterLabel_.label())) {
+	    
+	    const trigger::Vids& VIDS (triggerSummary->filterIds(filterIndex));
+	    const trigger::Keys& KEYS(triggerSummary->filterKeys(filterIndex));
+	    const size_type nI(VIDS.size());
+	    const size_type nK(KEYS.size());
+	    assert(nI==nK);
+	    const size_type n(max(nI,nK));
+	    //	cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
+	    const trigger::TriggerObjectCollection& TOC(triggerSummary->getObjects());
+	    for (size_type i=0; i!=n; ++i) {
+	      const trigger::TriggerObject& TO(TOC[KEYS[i]]);
+	      MuonLegObjects.push_back(TO);	  
+	      //	  cout << "   " << i << " " << VIDS[i] << "/" << KEYS[i] << ": "
+	      //	       << TO.id() << " " << TO.pt() << " " << TO.eta() << " " << TO.phi() << " " << TO.mass()
+	      //	       << endl;
+	    }
+	  }
 	}
-      }
       }
     }
   }

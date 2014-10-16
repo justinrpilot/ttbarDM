@@ -24,7 +24,8 @@ options.register('maxEvts',
 options.register('sample',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
-                 'file:/afs/cern.ch/work/o/oiorio/public/xDM/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+#                 'file:/afs/cern.ch/work/o/oiorio/public/xDM/patTuple_tlbsm_train_tlbsm_71x_v1.root',
+                 'file:/afs/cern.ch/user/d/decosa/wdecosa/public/DMtt/miniAOD_TTDMDMJets_M200GeV_Pu20bx25_10C35665-4E2D-E411-A45E-0025901D4864.root',              
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
                  'Sample to analyze')
@@ -48,6 +49,13 @@ options.register('isData',
                  opts.VarParsing.varType.bool,
                  'Is data?')
 
+options.register('miniAOD',
+                 True,
+                 opts.VarParsing.multiplicity.singleton,
+                 opts.VarParsing.varType.bool,
+                 'miniAOD source')
+
+
 options.register('LHE',
                  False,
                  opts.VarParsing.multiplicity.singleton,
@@ -57,6 +65,34 @@ options.register('LHE',
 options.parseArguments()
 
 if(options.isData):options.LHE = False
+
+    
+###inputTag labels
+if(options.miniAOD):
+    muLabel  = 'slimmedMuons'
+    elLabel  = 'slimmedElectrons'
+    jetLabel = 'slimmedJets'
+    pvLabel  = 'offlineSlimmedPrimaryVertices'
+    particleFlowLabel = 'packedPFCandidates'    
+    metLabel = 'slimmedMETs'
+else:
+    muLabel = 'selectedPatMuons'
+    elLabel = 'selectedPatElectrons'
+    if options.version=="53" :
+        jetLabel="goodPatJetsPFlow"
+    elif options.version=="71" :
+        jetLabel="goodPatJets"
+    pvLabel             = "goodOfflinePrimaryVertices"
+    particleFlowLabel = "particleFlow"    
+    metLabel = 'patMETPF'
+
+triggerResultsLabel = "TriggerResults"
+triggerSummaryLabel = "hltTriggerSummaryAOD"
+hltMuonFilterLabel       = "hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f40QL3crIsoRhoFiltered0p15"
+hltPathLabel             = "HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL"
+hltElectronFilterLabel  = "hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"
+lheLabel = "source"
+
 
 process = cms.Process("ttDManalysisEDMNtuples")
 
@@ -88,20 +124,23 @@ for pset in process.GlobalTag.toGet.value():
 ### Selected leptons and jets
 process.skimmedPatMuons = cms.EDFilter(
     "PATMuonSelector",
-    src = cms.InputTag("selectedPatMuons"),
+    src = cms.InputTag(muLabel),
     cut = cms.string("pt > 30 && abs(eta) < 2.4")
     )
 
 process.skimmedPatElectrons = cms.EDFilter(
     "PATElectronSelector",
-    src = cms.InputTag("selectedPatElectrons"),
+    src = cms.InputTag(elLabel),
     cut = cms.string("pt > 30 && abs(eta) < 2.5")
     )
 
-if options.version=="53" :
-    jetLabel="goodPatJetsPFlow"
-elif options.version=="71" :
-    jetLabel="goodPatJets"
+process.skimmedPatMET = cms.EDFilter(
+    "PATMETSelector",
+    src = cms.InputTag(metLabel),
+    cut = cms.string("")
+    )
+
+
 process.skimmedPatJets = cms.EDFilter(
     "CandViewSelector",
     src = cms.InputTag(jetLabel),
@@ -121,12 +160,12 @@ process.jetFilter = cms.EDFilter("CandViewCountFilter",
 process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
-    pv        = cms.InputTag("goodOfflinePrimaryVertices"),
+    pv        = cms.InputTag(pvLabel),
 #    pv        = cms.InputTag("offlinePrimaryVertices"),
     ### TTRIGGER ###
-    triggerResults     = cms.InputTag("TriggerResults","","HLT"),
-    triggerSummary     = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
-    hltMuonFilter      = cms.InputTag("hltL3crIsoL1sMu16Eta2p1L1f0L2f16QL3f40QL3crIsoRhoFiltered0p15"),
+    triggerResults = cms.InputTag(triggerResultsLabel,"","HLT"),
+    triggerSummary = cms.InputTag(triggerSummaryLabel,"","HLT"),
+    hltMuonFilter  = cms.InputTag(hltMuonFilterLabel),
     hltPath            = cms.string("HLT_IsoMu40_eta2p1_v11"),
     hlt2reco_deltaRmax = cms.double(0.1),
     mainROOTFILEdir    = cms.string("../data/")
@@ -135,10 +174,10 @@ process.muonUserData = cms.EDProducer(
 process.jetUserData = cms.EDProducer(
     'JetUserData',
     jetLabel  = cms.InputTag("skimmedPatJets"),
-    pv        = cms.InputTag("goodOfflinePrimaryVertices"),
+    pv        = cms.InputTag(pvLabel),
     ### TTRIGGER ###
-    triggerResults     = cms.InputTag("TriggerResults","","HLT"),
-    triggerSummary     = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
+    triggerResults = cms.InputTag(triggerResultsLabel,"","HLT"),
+    triggerSummary = cms.InputTag(triggerSummaryLabel,"","HLT"),
     hltJetFilter       = cms.InputTag("hltSixCenJet20L1FastJet"),
     hltPath            = cms.string("HLT_QuadJet60_DiJet20_v6"),
     hlt2reco_deltaRmax = cms.double(0.2)
@@ -147,10 +186,10 @@ process.jetUserData = cms.EDProducer(
 process.electronUserData = cms.EDProducer(
     'ElectronUserData',
     eleLabel = cms.InputTag("skimmedPatElectrons"),
-    pv        = cms.InputTag("goodOfflinePrimaryVertices"),
-    triggerResults = cms.InputTag("TriggerResults"),
-    triggerSummary = cms.InputTag("hltTriggerSummaryAOD"),
-    hltElectronFilter  = cms.InputTag("hltL1sL1Mu3p5EG12ORL1MuOpenEG12L3Filtered8"),  ##trigger matching code to be fixed!
+    pv        = cms.InputTag(pvLabel),
+    triggerResults = cms.InputTag(triggerResultsLabel),
+    triggerSummary = cms.InputTag(triggerSummaryLabel),
+    hltElectronFilter  = cms.InputTag(hltElectronFilterLabel),  ##trigger matching code to be fixed!
     hltPath             = cms.string("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL")
 )
 
@@ -158,7 +197,7 @@ process.electronUserData = cms.EDProducer(
 
 from PhysicsTools.CandAlgos.EventShapeVars_cff import *
 process.eventShapePFVars = pfEventShapeVars.clone()
-process.eventShapePFVars.src = cms.InputTag("particleFlow")
+process.eventShapePFVars.src = cms.InputTag(particleFlowLabel)
 
 process.eventShapePFJetVars = pfEventShapeVars.clone()
 process.eventShapePFJetVars.src = cms.InputTag("skimmedPatJets")
@@ -175,6 +214,7 @@ process.analysisPath = cms.Path(
     process.skimmedPatElectrons +
     process.skimmedPatMuons +
     process.skimmedPatJets +
+    process.skimmedPatMET +
     process.eventShapePFVars +
     process.eventShapePFJetVars +
     process.centrality
