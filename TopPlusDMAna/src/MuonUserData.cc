@@ -45,6 +45,7 @@ private:
   void produce( edm::Event &, const edm::EventSetup & );
   bool isMatchedWithTrigger(const pat::Muon, trigger::TriggerObjectCollection,int&,double&,double);
   void put( edm::Event& evt, double value, const char* instanceName);
+  
 
   TH1F* convertTGraph2TH1F(TGraphAsymmErrors* g);
   double getSF_muonID(double, double);
@@ -86,12 +87,14 @@ MuonUserData::MuonUserData(const edm::ParameterSet& iConfig):
    hltMuonFilterLabel_ (iConfig.getParameter<edm::InputTag>("hltMuonFilter")),   //trigger objects we want to match
    hltPath_            (iConfig.getParameter<std::string>("hltPath")),
    hlt2reco_deltaRmax_ (iConfig.getParameter<double>("hlt2reco_deltaRmax")),
-   mainROOTFILEdir_    (iConfig.getParameter<std::string>("mainROOTFILEdir"))
+   mainROOTFILEdir_    (iConfig.getUntrackedParameter<std::string>("mainROOTFILEdir",""))
  {
   produces<std::vector<pat::Muon> >();
 
-  /*
+
+  if (mainROOTFILEdir_!=""){
   TFile* file_muonSF_ID  = new TFile(mainROOTFILEdir_+"MuonEfficiencies_Run2012ReReco_53X.root",     "READ");
+
   //DATA_over_MC_Tight_eta_pt20-500
   muonID_0_0p9_   = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta<0.9") ) );
   muonID_0p9_1p2_ = (file_muonSF_ID->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ID->Get("DATA_over_MC_Tight_pt_abseta0.9-1.2") ) );
@@ -104,21 +107,26 @@ MuonUserData::MuonUserData(const edm::ParameterSet& iConfig):
   muonISO_0p9_1p2_ = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta0.9-1.2") ) );
   muonISO_1p2_2p1_ = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta1.2-2.1") ) );
   muonISO_2p1_2p4_ = (file_muonSF_ISO->IsZombie() ? NULL : convertTGraph2TH1F( (TGraphAsymmErrors*)file_muonSF_ISO->Get("DATA_over_MC_combRelIsoPF04dBeta<012_Tight_pt_abseta2.1-2.4") ) );
-  */
+  
+  }
 
   //  TFile* file_muonSF_singleMuHLT = new TFile(mainROOTFILEdir_+"SingleMuonTriggerEfficiencies_eta2p1_Run2012ABCD_v5trees.root","READ");
   //  TFile* file_muonSF_doubleMuHLT = new TFile(mainROOTFILEdir_+"MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2","READ");
 
+  if (mainROOTFILEdir_!=""){
   if (muonID_0_0p9_!=NULL) {
     muon_pt_min_ = muonID_0_0p9_->GetXaxis()->GetXmin();
     muon_pt_max_ = muonID_0_0p9_->GetXaxis()->GetXmax();
   }
+  }
  }
+
 
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
+
 
   //  bool isMC = (!iEvent.isRealData());
   
@@ -140,7 +148,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     std::cout << "Initialization of HLTConfigProvider failed!!" << std::endl;
     return;
   }
-
+  
   if (changedConfig){
     std::cout << "the current menu is " << hltConfig.tableName() << std::endl;
     triggerBit = -1;
@@ -165,7 +173,8 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   trigger::TriggerObjectCollection MuonLegObjects;
 
   edm::Handle<trigger::TriggerEvent> triggerSummary;
- 
+
+
   if ( triggerSummary.isValid() ) {
     iEvent.getByLabel(triggerSummaryLabel_, triggerSummary);
     
@@ -175,16 +184,16 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
       const unsigned int triggerIndex(hltConfig.triggerIndex(hltPath_));
       const vector<string>& moduleLabels(hltConfig.moduleLabels(triggerIndex));
       const unsigned int moduleIndex(triggerResults->index(triggerIndex));
-  
+      
       for (unsigned int j=0; j<=moduleIndex; ++j) {
-	
 	
 	const string& moduleLabel(moduleLabels[j]);
 	const string  moduleType(hltConfig.moduleType(moduleLabel));
 	// check whether the module is packed up in TriggerEvent product
 	const unsigned int filterIndex(triggerSummary->filterIndex(InputTag(moduleLabel,"","HLT")));
+
 	if (filterIndex<triggerSummary->sizeFilters()) {
-	  //      cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
+	  //	  cout << " 'L3' filter in slot " << j << " - label/type " << moduleLabel << "/" << moduleType << endl;
 	  TString lable = moduleLabel.c_str();
 	  if (lable.Contains(hltMuonFilterLabel_.label())) {
 	    
@@ -194,7 +203,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	    const size_type nK(KEYS.size());
 	    assert(nI==nK);
 	    const size_type n(max(nI,nK));
-	    //	cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
+	    //	    cout << "   " << n  << " accepted TRIGGER objects found: " << endl;
 	    const trigger::TriggerObjectCollection& TOC(triggerSummary->getObjects());
 	    for (size_type i=0; i!=n; ++i) {
 	      const trigger::TriggerObject& TO(TOC[KEYS[i]]);
@@ -208,6 +217,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
       }
     }
   }
+
   //  std::cout << "----> MuonLegObjects: " << MuonLegObjects.size() << " <--> RECO : " << muonColl->size() << std::endl;
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
   for (size_t i = 0; i< muonColl->size(); i++){
@@ -234,6 +244,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 
     // trigger matched 
+
     int idx       = -1;
     double deltaR = -1.;
     bool isMatched2trigger = isMatchedWithTrigger(m, MuonLegObjects, idx, deltaR, hlt2reco_deltaRmax_) ;
@@ -267,6 +278,7 @@ void MuonUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     m.addUserFloat("muonIDweight",  muonIDweight );
     m.addUserFloat("muonISOweight", muonISOweight);
     m.addUserFloat("muonHLTweight", muonHLTweight);
+
     
     /*
     //     **** DEBUG dB ****
@@ -317,16 +329,16 @@ double
 MuonUserData::getSF_muonID(double pt, double eta)
 {  
   double SF = 1.;
+  if (mainROOTFILEdir_!=""){
   if(pt < muon_pt_min_) pt = muon_pt_min_;
   if(pt > muon_pt_max_) pt = muon_pt_max_;
   eta=fabs(eta);
 
-  /*
   if(eta<=0.9) SF = muonID_0_0p9_->GetBinContent(muonID_0_0p9_->FindBin(pt));
   if(eta>0.9 && eta<=1.2) SF = muonID_0p9_1p2_->GetBinContent(muonID_0p9_1p2_->FindBin(pt));
   if(eta>1.2 && eta<=2.1) SF = muonID_1p2_2p1_->GetBinContent(muonID_1p2_2p1_->FindBin(pt));
   if(eta>2.1 && eta<=2.4) SF = muonID_2p1_2p4_->GetBinContent(muonID_2p1_2p4_->FindBin(pt));
-  */
+  }
   return SF;
 }
 double
@@ -336,12 +348,13 @@ MuonUserData::getSFerror_muonID(double pt, double eta)
   if(pt < muon_pt_min_) pt = muon_pt_min_;
   if(pt > muon_pt_max_) pt = muon_pt_max_;
   eta=fabs(eta);
-  /*
+
+  if (mainROOTFILEdir_!=""){
   if(eta<=0.9) SF = muonID_0_0p9_->GetBinError(muonID_0_0p9_->FindBin(pt));
   if(eta>0.9 && eta<=1.2) SF = muonID_0p9_1p2_->GetBinError(muonID_0p9_1p2_->FindBin(pt));
   if(eta>1.2 && eta<=2.1) SF = muonID_1p2_2p1_->GetBinError(muonID_1p2_2p1_->FindBin(pt));
   if(eta>2.1 && eta<=2.4) SF = muonID_2p1_2p4_->GetBinError(muonID_2p1_2p4_->FindBin(pt));
-  */
+  }
   return SF;
 }
 
@@ -352,12 +365,13 @@ MuonUserData::getSF_muonISO(double pt, double eta)
   if(pt < muon_pt_min_) pt = muon_pt_min_;
   if(pt > muon_pt_max_) pt = muon_pt_max_;
   eta=fabs(eta);
-  /*
+
+  if (mainROOTFILEdir_!=""){
   if(eta<=0.9) SF = muonISO_0_0p9_->GetBinContent(muonISO_0_0p9_->FindBin(pt));
   if(eta>0.9 && eta<=1.2) SF = muonISO_0p9_1p2_->GetBinContent(muonISO_0p9_1p2_->FindBin(pt));
   if(eta>1.2 && eta<=2.1) SF = muonISO_1p2_2p1_->GetBinContent(muonISO_1p2_2p1_->FindBin(pt));
   if(eta>2.1 && eta<=2.4) SF = muonISO_2p1_2p4_->GetBinContent(muonISO_2p1_2p4_->FindBin(pt));
-  */
+  }
   return SF;  
 }
 double
@@ -367,12 +381,13 @@ MuonUserData::getSFerror_muonISO(double pt, double eta)
   if(pt < muon_pt_min_) pt = muon_pt_min_;
   if(pt > muon_pt_max_) pt = muon_pt_max_;
   eta=fabs(eta);
-  /*
+
+  if (mainROOTFILEdir_!=""){
   if(eta<=0.9) SF = muonISO_0_0p9_->GetBinError(muonISO_0_0p9_->FindBin(pt));
   if(eta>0.9 && eta<=1.2) SF = muonISO_0p9_1p2_->GetBinError(muonISO_0p9_1p2_->FindBin(pt));
   if(eta>1.2 && eta<=2.1) SF = muonISO_1p2_2p1_->GetBinError(muonISO_1p2_2p1_->FindBin(pt));
   if(eta>2.1 && eta<=2.4) SF = muonISO_2p1_2p4_->GetBinError(muonISO_2p1_2p4_->FindBin(pt));
-  */
+  }
   return SF;  
 }
 

@@ -4,11 +4,23 @@ import copy
 leptonssize = cms.untracked.int32(5)
 jetssize = cms.untracked.int32(20)
 
+mulabel = cms.string("muons")
+elelabel = cms.string("electrons")
+jetlabel = cms.string("jets")
+metlabel = cms.string("met")
+
 DMTreesDumper = cms.EDAnalyzer(
-    'DMTreeMaker',
+    'DMAnalysisTreeMaker',
+    lhes = cms.InputTag('source'),
+    muLabel = mulabel,
+    eleLabel = elelabel,
+    jetsLabel = jetlabel,
+    boostedTopsLabel = jetlabel,
+    metLabel = metlabel,
     physicsObjects = cms.VPSet(
         cms.PSet(
-            label = cms.string("electrons"),
+            label = elelabel,
+            prefix = cms.string("el"),
             maxInstances = leptonssize,
             variablesF = cms.VInputTag(
                 cms.InputTag("electrons","elE"),
@@ -36,7 +48,8 @@ DMTreesDumper = cms.EDAnalyzer(
             singleF = cms.VInputTag(),
             ),
         cms.PSet(
-            label = cms.string("muons"),
+            label = mulabel,
+            prefix = cms.string("mu"),
             maxInstances = leptonssize,
             variablesF = cms.VInputTag(
                 cms.InputTag("muons","muE"),
@@ -87,7 +100,8 @@ DMTreesDumper = cms.EDAnalyzer(
             singleF = cms.VInputTag(),
             ),
         cms.PSet(
-            label = cms.string("jets"),
+            label = jetlabel,
+            prefix = cms.string("jet"),
             maxInstances = jetssize,
             variablesF = cms.VInputTag(
                 cms.InputTag("jets","jetE"),
@@ -144,6 +158,20 @@ DMTreesDumper = cms.EDAnalyzer(
             singleF = cms.VInputTag(),
             ),
 
+        cms.PSet(
+            label = metlabel,
+            prefix = cms.string("met"),
+            maxInstances = jetssize,
+            variablesF = cms.VInputTag(
+                cms.InputTag("met","metPt"),
+                cms.InputTag("met","metPhi"),
+                cms.InputTag("met","metPx"),
+                cms.InputTag("met","metPy"),
+                ),
+            variablesI = cms.VInputTag(),
+            singleI = cms.VInputTag(),
+            singleF = cms.VInputTag(),
+            )
         )
     )
 
