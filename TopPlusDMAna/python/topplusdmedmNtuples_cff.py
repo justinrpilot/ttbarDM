@@ -483,10 +483,10 @@ electronVars = (
         tag = cms.untracked.string("ooEmooP"),
         quantity = cms.untracked.string("userFloat('ooEmooP')")
         ),
-#   cms.PSet(
-#        tag = cms.untracked.string("expectedMissInHits"),
-#        quantity = cms.untracked.string("userFloat('missingInnerTrackerHits')")
-#        ),
+   cms.PSet(
+        tag = cms.untracked.string("expectedMissInHits"),
+        quantity = cms.untracked.string("userFloat('missingInnerTrackerHits')")
+        ),
    cms.PSet(
         tag = cms.untracked.string("pssConVeto"),
         quantity = cms.untracked.string("passConversionVeto")
