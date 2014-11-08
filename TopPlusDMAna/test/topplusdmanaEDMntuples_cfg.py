@@ -57,7 +57,7 @@ options.register('miniAOD',
 
 
 options.register('LHE',
-                 False,
+                 True,
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.bool,
                  'Keep LHEProducts')
@@ -168,7 +168,7 @@ process.muonUserData = cms.EDProducer(
     hltMuonFilter  = cms.InputTag(hltMuonFilterLabel),
     hltPath            = cms.string("HLT_IsoMu40_eta2p1_v11"),
     hlt2reco_deltaRmax = cms.double(0.1),
-    mainROOTFILEdir    = cms.string("../data/")
+    #    mainROOTFILEdir    = cms.string("../data/")
 )
 
 process.jetUserData = cms.EDProducer(
@@ -247,7 +247,8 @@ if(options.LHE):
         lheLabel = cms.InputTag("source")
         )
     process.analysisPath+=process.LHEUserData
-    process.edmNtuplesOut.outputCommand+=(' *_LHE*_*_*')
+    process.edmNtuplesOut.outputCommands+=('keep *_*LHE*_*_*',)
+    process.edmNtuplesOut.outputCommands+=('keep LHEEventProduct_*_*_*',)
 
 ### end LHE products     
 
