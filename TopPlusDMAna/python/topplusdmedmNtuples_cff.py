@@ -259,6 +259,10 @@ jetVars = (
      tag = cms.untracked.string("CSVV1"),
      quantity = cms.untracked.string("bDiscriminator(\"combinedSecondaryVertexV1BJetTags\")")
     ),
+    cms.PSet(
+     tag = cms.untracked.string("CSVIVFV2"),
+     quantity = cms.untracked.string("bDiscriminator(\"combinedInclusiveSecondaryVertexV2BJetTags\")")
+    ),
 ### GEN PARTON
     cms.PSet(
      tag = cms.untracked.string("GenPartonY"),
