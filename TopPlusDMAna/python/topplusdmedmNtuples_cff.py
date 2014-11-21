@@ -236,6 +236,33 @@ muonVars = (
    ),
 )
 
+ak8jetVars = (
+    cms.PSet(
+      tag = cms.untracked.string("tau1"),
+      quantity = cms.untracked.string("userFloat('NjettinessAK8:tau1')")
+      ), 
+    cms.PSet(
+      tag = cms.untracked.string("tau2"),
+      quantity = cms.untracked.string("userFloat('NjettinessAK8:tau2')")
+      ), 
+    cms.PSet(
+      tag = cms.untracked.string("tau3"),
+      quantity = cms.untracked.string("userFloat('NjettinessAK8:tau3')")
+      ), 
+    cms.PSet(
+      tag = cms.untracked.string("trimmedMass"),
+      quantity = cms.untracked.string("userFloat('ak8PFJetsCHSTrimmedLinks')")
+      ), 
+    cms.PSet(
+      tag = cms.untracked.string("prunedMass"),
+      quantity = cms.untracked.string("userFloat('ak8PFJetsCHSPrunedLinks')")
+      ), 
+    cms.PSet(
+      tag = cms.untracked.string("filteredMass"),
+      quantity = cms.untracked.string("userFloat('ak8PFJetsCHSFilteredLinks')")
+      ), 
+    )
+
 ### jet variables
 jetVars = (    
 ### B-TAGGING
@@ -512,6 +539,12 @@ jets.prefix = cms.untracked.string("jet")
 jets.src = cms.InputTag("skimmedPatJets")
 #jets.src = cms.InputTag("selectedPatJets")
 
+jetsAK8 = copy.deepcopy(basic)
+jetsAK8.variables += jetVars
+jetsAK8.variables += ak8jetVars
+jetsAK8.prefix = cms.untracked.string("jetAK8")
+jetsAK8.src = cms.InputTag("skimmedPatJetsAK8")
+
 ###genPart
 genPart = copy.deepcopy(basic)
 genPart.variables += genPartVars
@@ -564,6 +597,7 @@ edmNtuplesOut = cms.OutputModule(
     "keep *_muons_*_*",
     "keep *_electrons_*_*",
     "keep *_jets_*_*",
+    "keep *_jetsAK8_*_*",
     "keep *_eventShape*_*_*",
     "keep *_*_*centrality*_*",
     "keep *_met_*_*",
