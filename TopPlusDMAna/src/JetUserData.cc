@@ -23,6 +23,10 @@
 #include "DataFormats/HLTReco/interface/TriggerObject.h"
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h" // gives access to the (release cycle dependent) trigger object codes
 
+
+#include <TFile.h>
+#include <TH1F.h>
+#include <TGraphAsymmErrors.h>
 #include <vector>
 
 using namespace reco;
@@ -44,6 +48,8 @@ private:
   edm::EDGetTokenT<std::vector<pat::Jet> >     jetToken_;
   edm::EDGetTokenT<std::vector<reco::Vertex> > pvToken_;
 
+  //InputTag jetLabel_;
+  InputTag jLabel_, pvLabel_;
   InputTag triggerResultsLabel_, triggerSummaryLabel_;
   InputTag hltJetFilterLabel_;
   std::string hltPath_;
@@ -54,33 +60,34 @@ private:
 
 
 JetUserData::JetUserData(const edm::ParameterSet& iConfig) :
+ 
+   jLabel_(iConfig.getParameter<edm::InputTag>("jetLabel")),
+   pvLabel_(iConfig.getParameter<edm::InputTag>("pv")),   // "offlinePrimaryVertex"
+
    triggerResultsLabel_(iConfig.getParameter<edm::InputTag>("triggerResults")),
    triggerSummaryLabel_(iConfig.getParameter<edm::InputTag>("triggerSummary")),
    hltJetFilterLabel_  (iConfig.getParameter<edm::InputTag>("hltJetFilter")),   //trigger objects we want to match
    hltPath_            (iConfig.getParameter<std::string>("hltPath")),
    hlt2reco_deltaRmax_ (iConfig.getParameter<double>("hlt2reco_deltaRmax"))
- {
-   jetToken_ = consumes<std::vector<pat::Jet> >     (iConfig.getParameter<edm::InputTag>("jetLabel"));
-   pvToken_  = consumes<std::vector<reco::Vertex> > (iConfig.getParameter<edm::InputTag>("pv"      ));   // "offlinePrimaryVertex"
+  {
+    produces<vector<pat::Jet> >();
+  }
 
-  produces<vector<pat::Jet> >();
- }
-
+#include "DataFormats/JetReco/interface/Jet.h"
 
 void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
-    
+  
   bool isMC = (!iEvent.isRealData());
-
+  
   //PV
   edm::Handle<std::vector<reco::Vertex> > pvHandle;
-  iEvent.getByToken(pvToken_, pvHandle);
-  //  const reco::Vertex& PV= pvHandle->front();
-
+  iEvent.getByLabel(pvLabel_, pvHandle);
+  //const reco::Vertex& PV= pvHandle->front();
+  
   //Jets
   edm::Handle<std::vector<pat::Jet> > jetHandle;
-  iEvent.getByToken(jetToken_, jetHandle);
-  auto_ptr<vector<pat::Jet> > jetColl(new std::vector<pat::Jet>() );
-
+  iEvent.getByLabel(jLabel_, jetHandle);
+  auto_ptr<vector<pat::Jet> > jetColl( new vector<pat::Jet> (*jetHandle) );
 
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
   // TRIGGER (this is not really needed ...)
@@ -95,7 +102,7 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     std::cout << "the current menu is " << hltConfig.tableName() << std::endl;
     triggerBit = -1;
     for (size_t j = 0; j < hltConfig.triggerNames().size(); j++) {
-      //      std::cout << "hltConfig.triggerNames()[" << j << "]: " << hltConfig.triggerNames()[j] << std::endl;
+      //std::cout << "hltConfig.triggerNames()[" << j << "]: " << hltConfig.triggerNames()[j] << std::endl;
       if (TString(hltConfig.triggerNames()[j]).Contains(hltPath_)) {triggerBit = j;pathFound=true;}
     }
     if (triggerBit == -1) std::cout << "HLT path not found" << std::endl;
@@ -154,7 +161,8 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
   }
   /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////  /////////
 
-
+  //std::cout << " JetUserData 2 " << std::endl;
+  //std::cout << " jetColl " << jetColl->size() << std::endl;
 
   for (size_t i = 0; i< jetColl->size(); i++){
     pat::Jet & jet = (*jetColl)[i];
@@ -162,9 +170,9 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     // BTAGGING
     // - working points : https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagPerformanceOP
     // - SF : https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagPOG#Recommendation_for_b_c_tagging_a
-    bool isCSVL = jet.bDiscriminator("combinedSecondaryVertexBJetTags") >  0.244 ;
-    bool isCSVM = jet.bDiscriminator("combinedSecondaryVertexBJetTags") >  0.679 ;
-    bool isCSVT = jet.bDiscriminator("combinedSecondaryVertexBJetTags") >  0.898 ;
+    //float isCSVL = (jet.bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags") >  0.244 ? 1. : 0.);
+    //float isCSVM = (jet.bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags") >  0.679 ? 1. : 0.);
+    //float isCSVT = (jet.bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags") >  0.898 ? 1. : 0.);
 
     //Individual jet operations to be added here
     // trigger matched 
@@ -175,18 +183,17 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     double hltPhi = ( isMatched2trigger ? JetLegObjects[0].phi()    : -999.);
     double hltPt  = ( isMatched2trigger ? JetLegObjects[0].pt()     : -999.);
     double hltE   = ( isMatched2trigger ? JetLegObjects[0].energy() : -999.);
-    
-
+ 
     // SMEARING
     // http://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
     reco::Candidate::LorentzVector smearedP4;
     if(isMC) {
       const reco::GenJet* genJet=jet.genJet();
       if(genJet) {
-        float smearFactor=getResolutionRatio(jet.eta());
-        smearedP4=jet.p4()-genJet->p4();
-        smearedP4*=smearFactor; // +- 3*smearFactorErr;
-        smearedP4+=genJet->p4();
+	float smearFactor=getResolutionRatio(jet.eta());
+	smearedP4=jet.p4()-genJet->p4();
+	smearedP4*=smearFactor; // +- 3*smearFactorErr;
+	smearedP4+=genJet->p4();
       }
     } else {
       smearedP4=jet.p4();
@@ -194,30 +201,28 @@ void JetUserData::produce( edm::Event& iEvent, const edm::EventSetup& iSetup) {
     // JER
     double JERup   = getJERup  (jet.eta());
     double JERdown = getJERdown(jet.eta());
-
+ 
+    //jet.addUserFloat("IsCSVL",isCSVL);
+    //jet.addUserFloat("IsCSVM",isCSVM);
+    //jet.addUserFloat("IsCSVT",isCSVT);
     
-    jet.addUserData("IsCSVL",isCSVL);
-    jet.addUserData("IsCSVM",isCSVM);
-    jet.addUserData("IsCSVT",isCSVT);
-
-    //	jetColl->push_back( *jet);
     jet.addUserFloat("HLTjetEta",   hltEta);
     jet.addUserFloat("HLTjetPhi",   hltPhi);
     jet.addUserFloat("HLTjetPt",    hltPt);
     jet.addUserFloat("HLTjetE",     hltE);
     jet.addUserFloat("HLTjetDeltaR",deltaR);
-
+    
     jet.addUserFloat("SmearedPEta", smearedP4.eta());
     jet.addUserFloat("SmearedPhi",  smearedP4.phi());
     jet.addUserFloat("SmearedPt",   smearedP4.pt());
     jet.addUserFloat("SmearedE",    smearedP4.energy());
-
+    
     jet.addUserFloat("JERup", JERup);
     jet.addUserFloat("JERup", JERdown);
-
+    
   }
 
- iEvent.put( jetColl );
+  iEvent.put( jetColl );
 
 }
 

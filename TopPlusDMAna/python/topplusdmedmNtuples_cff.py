@@ -139,11 +139,11 @@ muonVars = (
    ### TIGHT
    cms.PSet(
     tag = cms.untracked.string("GlbTrkNormChi2"),
-    quantity = cms.untracked.string("? globalTrack.isNonnull ? globalTrack.normalizedChi2 : 0")
+    quantity = cms.untracked.string("? globalTrack.isNonnull ? globalTrack.normalizedChi2 : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("NumberValidMuonHits"),
-    quantity = cms.untracked.string("? globalTrack.isNonnull ? globalTrack.hitPattern.numberOfValidMuonHits : 0")
+    quantity = cms.untracked.string("? globalTrack.isNonnull ? globalTrack.hitPattern.numberOfValidMuonHits : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("NumberMatchedStations"),
@@ -151,24 +151,24 @@ muonVars = (
    ),
    cms.PSet(
     tag = cms.untracked.string("NumberValidPixelHits"),
-    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.numberOfValidPixelHits : 0")
+    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.numberOfValidPixelHits : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("NumberTrackerLayers"),
-    quantity = cms.untracked.string("? track.isNonnull ? track.hitPattern.trackerLayersWithMeasurement : 0")
+    quantity = cms.untracked.string("? track.isNonnull ? track.hitPattern.trackerLayersWithMeasurement : -900")
    ),
    ### SOFT
    cms.PSet(
     tag = cms.untracked.string("NumberOfValidTrackerHits"),
-    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.numberOfValidTrackerHits : 0")
+    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.numberOfValidTrackerHits : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("NumberOfPixelLayers"),
-    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.pixelLayersWithMeasurement : 0")
+    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.hitPattern.pixelLayersWithMeasurement : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("InTrkNormChi2"),
-    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.normalizedChi2 : 0")
+    quantity = cms.untracked.string("? innerTrack.isNonnull ? innerTrack.normalizedChi2 : -900")
    ),
 ## variables used in isolation
 ## https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Accessing_PF_Isolation_from_reco   
@@ -191,27 +191,27 @@ muonVars = (
 ### genLepton
    cms.PSet(
     tag = cms.untracked.string("GenMuonY"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.rapidity : 0")
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.rapidity : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("GenMuonEta"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.eta : 0")
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.eta : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("GenMuonPhi"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.phi : 0")
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.phi : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("GenMuonPt"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.pt : 0")
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.pt : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("GenMuonE"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.energy : 0")
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.energy : -900")
    ),
    cms.PSet(
     tag = cms.untracked.string("GenMuonCharge"),
-    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.charge : 0")
+    quantity = cms.untracked.string("? genParticleRef.isNonnull ? genLepton.charge : -900")
    ),
 ### trigger matching
    cms.PSet(
@@ -241,19 +241,19 @@ jetVars = (
 ### B-TAGGING
     cms.PSet(
      tag = cms.untracked.string("IsCSVL"),
-     quantity = cms.untracked.string("userFloat('IsCSVL')")
+     quantity = cms.untracked.string("? bDiscriminator(\"combinedInclusiveSecondaryVertexV2BJetTags\") > 0.423 ? 1. : 0.")
     ),
     cms.PSet(
      tag = cms.untracked.string("IsCSVM"),
-     quantity = cms.untracked.string("userFloat('IsCSVM')")
+     quantity = cms.untracked.string("? bDiscriminator(\"combinedInclusiveSecondaryVertexV2BJetTags\") > 0.819 ? 1. : 0.")
     ),
     cms.PSet(
      tag = cms.untracked.string("IsCSVT"),
-     quantity = cms.untracked.string("userFloat('IsCSVT')")
+     quantity = cms.untracked.string(" ? bDiscriminator(\"combinedInclusiveSecondaryVertexV2BJetTags\") > 0.941 ? 1. : 0.")
     ),
     cms.PSet(
      tag = cms.untracked.string("CSV"),
-     quantity = cms.untracked.string("bDiscriminator(\"combinedSecondaryVertexBJetTags\")")
+     quantity = cms.untracked.string("bDiscriminator(\"combinedInclusiveSecondaryVertexV2BJetTags\")")
     ),
     cms.PSet(
      tag = cms.untracked.string("CSVV1"),
@@ -262,27 +262,27 @@ jetVars = (
 ### GEN PARTON
     cms.PSet(
      tag = cms.untracked.string("GenPartonY"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.rapidity : 0")
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.rapidity : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenPartonEta"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.eta : 0")
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.eta : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenPartonPhi"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.phi : 0")
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.phi : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenPartonPt"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.pt : 0")
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.pt : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenPartonE"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.energy : 0")
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.energy : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenPartonCharge"),
-     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.charge : 0")
+     quantity = cms.untracked.string("? genParticleRef.isNonnull ? genParton.charge : -900")
     ),
 ###
     cms.PSet(
@@ -296,27 +296,27 @@ jetVars = (
 ### GEN JET
     cms.PSet(
      tag = cms.untracked.string("GenJetY"),
-     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.rapidity : 0")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.rapidity : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetEta"),
-     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.eta : 0")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.eta : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetPhi"),
-     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.phi : 0")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.phi : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetPt"),
-     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.pt : 0")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.pt : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetE"),
-     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.energy : 0")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.energy : -900")
     ),
     cms.PSet(
      tag = cms.untracked.string("GenJetCharge"),
-     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.charge : 0")
+     quantity = cms.untracked.string("? genJetFwdRef.isNonnull ? genJet.charge : -900")
     ),
 ### TRIGGER MATHING
     cms.PSet(
@@ -434,7 +434,7 @@ genPartVars = (
     ),
     cms.PSet(
     tag = cms.untracked.string("MomID"),
-    quantity = cms.untracked.string("?numberOfMothers>0 ? mother(0).pdgId : 0")
+    quantity = cms.untracked.string("?numberOfMothers>0 ? mother(0).pdgId : -900")
     ),
     )
 
@@ -505,7 +505,7 @@ electrons.src = cms.InputTag("electronUserData")
 jets = copy.deepcopy(basic)
 jets.variables += jetVars
 jets.prefix = cms.untracked.string("jet")
-jets.src = cms.InputTag("skimmedPatJets")
+jets.src = cms.InputTag("jetUserData")
 #jets.src = cms.InputTag("selectedPatJets")
 
 ###genPart

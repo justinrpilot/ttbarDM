@@ -16,7 +16,7 @@ import FWCore.ParameterSet.VarParsing as opts
 options = opts.VarParsing ('analysis')
 
 options.register('maxEvts',
-                 -1,# default value: process all events
+                 100,# default value: process all events
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.int,
                  'Number of events to process')
@@ -25,7 +25,8 @@ options.register('sample',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/patTuple_tlbsm_train_tlbsm_71x_v1.root',
 #                 'file:/afs/cern.ch/user/d/decosa/public/forTTDMteam/tlbsm_53x_v3_mc_10_1_qPV.root',
 #                 'file:/afs/cern.ch/work/o/oiorio/public/xDM/patTuple_tlbsm_train_tlbsm_71x_v1.root',
-                 'file:/afs/cern.ch/user/d/decosa/wdecosa/public/DMtt/miniAOD_TTDMDMJets_M200GeV_Pu20bx25_10C35665-4E2D-E411-A45E-0025901D4864.root',              
+                 #'file:/afs/cern.ch/user/d/decosa/wdecosa/public/DMtt/miniAOD_TTDMDMJets_M200GeV_Pu20bx25_10C35665-4E2D-E411-A45E-0025901D4864.root', 
+                 'file:/afs/cern.ch/user/d/dpinna/scratch0/miniAOD.root',
                  opts.VarParsing.multiplicity.singleton,
                  opts.VarParsing.varType.string,
                  'Sample to analyze')
@@ -71,7 +72,7 @@ if(options.isData):options.LHE = False
 if(options.miniAOD):
     muLabel  = 'slimmedMuons'
     elLabel  = 'slimmedElectrons'
-    jetLabel = 'slimmedJets'
+    jLabel = 'slimmedJets'
     pvLabel  = 'offlineSlimmedPrimaryVertices'
     particleFlowLabel = 'packedPFCandidates'    
     metLabel = 'slimmedMETs'
@@ -79,9 +80,9 @@ else:
     muLabel = 'selectedPatMuons'
     elLabel = 'selectedPatElectrons'
     if options.version=="53" :
-        jetLabel="goodPatJetsPFlow"
+        jLabel="goodPatJetsPFlow"
     elif options.version=="71" :
-        jetLabel="goodPatJets"
+        jLabel="goodPatJets"
     pvLabel             = "goodOfflinePrimaryVertices"
     particleFlowLabel = "particleFlow"    
     metLabel = 'patMETPF'
@@ -142,10 +143,10 @@ process.skimmedPatMET = cms.EDFilter(
 
 
 process.skimmedPatJets = cms.EDFilter(
-    "CandViewSelector",
-    src = cms.InputTag(jetLabel),
-#    src = cms.InputTag("goodPatJetsPFlow"), # 53x
-#    src = cms.InputTag("goodPatJets"), # 71x    
+    "PATJetSelector",
+    src = cms.InputTag(jLabel),
+    #    src = cms.InputTag("goodPatJetsPFlow"), # 53x
+    #    src = cms.InputTag("goodPatJets"), # 71x    
     cut = cms.string("(( pt > 25 && mass < 20.) || mass > 20. ) && abs(eta) < 4.")
 )
 
@@ -161,14 +162,13 @@ process.muonUserData = cms.EDProducer(
     'MuonUserData',
     muonLabel = cms.InputTag("skimmedPatMuons"),
     pv        = cms.InputTag(pvLabel),
-#    pv        = cms.InputTag("offlinePrimaryVertices"),
     ### TTRIGGER ###
     triggerResults = cms.InputTag(triggerResultsLabel,"","HLT"),
     triggerSummary = cms.InputTag(triggerSummaryLabel,"","HLT"),
     hltMuonFilter  = cms.InputTag(hltMuonFilterLabel),
     hltPath            = cms.string("HLT_IsoMu40_eta2p1_v11"),
     hlt2reco_deltaRmax = cms.double(0.1),
-    #    mainROOTFILEdir    = cms.string("../data/")
+    # mainROOTFILEdir    = cms.string("../data/")
 )
 
 process.jetUserData = cms.EDProducer(
@@ -253,9 +253,9 @@ if(options.LHE):
 ### end LHE products     
 
 
-process.edmNtuplesOut.SelectEvents = cms.untracked.PSet(
-    SelectEvents = cms.vstring('filterPath')
-    )
+#process.edmNtuplesOut.SelectEvents = cms.untracked.PSet(
+#    SelectEvents = cms.vstring('filterPath')
+#    )
 
 process.fullPath = cms.Schedule(
     process.analysisPath,
@@ -264,7 +264,7 @@ process.fullPath = cms.Schedule(
 
 process.endPath = cms.EndPath(process.edmNtuplesOut)
 
-## process.outpath = cms.Schedule(
-##     process.analysisPath,
-##     process.endPath
-##     )
+#process.outpath = cms.Schedule(
+#     process.analysisPath,
+#     process.endPath
+#     )
