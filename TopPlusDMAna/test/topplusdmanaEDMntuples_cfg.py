@@ -73,6 +73,7 @@ if(options.miniAOD):
     muLabel  = 'slimmedMuons'
     elLabel  = 'slimmedElectrons'
     jLabel = 'slimmedJets'
+    jLabelAK8 = 'slimmedJetsAK8'
     pvLabel  = 'offlineSlimmedPrimaryVertices'
     particleFlowLabel = 'packedPFCandidates'    
     metLabel = 'slimmedMETs'
@@ -151,6 +152,15 @@ process.skimmedPatJets = cms.EDFilter(
 )
 
 
+process.skimmedPatJetsAK8 = cms.EDFilter(
+    "PATJetSelector",
+    src = cms.InputTag(jLabelAK8),
+    #    src = cms.InputTag("goodPatJetsPFlow"), # 53x
+    #    src = cms.InputTag("goodPatJets"), # 71x    
+    cut = cms.string("pt > 100 && abs(eta) < 4.")
+)
+
+
 ### Asking for at least 2 jets satisfying the selection above 
 process.jetFilter = cms.EDFilter("CandViewCountFilter",
     src = cms.InputTag("skimmedPatJets"),
@@ -174,6 +184,19 @@ process.muonUserData = cms.EDProducer(
 process.jetUserData = cms.EDProducer(
     'JetUserData',
     jetLabel  = cms.InputTag("skimmedPatJets"),
+    pv        = cms.InputTag(pvLabel),
+    ### TTRIGGER ###
+    triggerResults = cms.InputTag(triggerResultsLabel,"","HLT"),
+    triggerSummary = cms.InputTag(triggerSummaryLabel,"","HLT"),
+    hltJetFilter       = cms.InputTag("hltSixCenJet20L1FastJet"),
+    hltPath            = cms.string("HLT_QuadJet60_DiJet20_v6"),
+    hlt2reco_deltaRmax = cms.double(0.2)
+)
+
+
+process.jetUserDataAK8 = cms.EDProducer(
+    'JetUserData',
+    jetLabel  = cms.InputTag("skimmedPatJetsAK8"),
     pv        = cms.InputTag(pvLabel),
     ### TTRIGGER ###
     triggerResults = cms.InputTag(triggerResultsLabel,"","HLT"),
@@ -214,6 +237,7 @@ process.analysisPath = cms.Path(
     process.skimmedPatElectrons +
     process.skimmedPatMuons +
     process.skimmedPatJets +
+    process.skimmedPatJetsAK8 +
     process.skimmedPatMET +
     process.eventShapePFVars +
     process.eventShapePFJetVars +
@@ -225,6 +249,7 @@ process.analysisPath = cms.Path(
 
 process.analysisPath+=process.muonUserData
 process.analysisPath+=process.jetUserData
+process.analysisPath+=process.jetUserDataAK8
 process.analysisPath+=process.electronUserData
 
 process.analysisPath+=process.genPart
@@ -233,6 +258,7 @@ process.analysisPath+=process.muons
 
 process.analysisPath+=process.electrons
 process.analysisPath+=process.jets
+process.analysisPath+=process.jetsAK8
 process.analysisPath+=process.met
 
 ### Creating the filter path to use in order to select events
